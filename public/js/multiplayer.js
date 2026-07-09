@@ -1,26 +1,44 @@
-const socket = io({ transports: ['websocket', 'polling'] });
-
 let playerId = null;
 let roomCode = null;
 let onStateCallback = null;
+let pollTimer = null;
 
-socket.on('connect', () => {
-  document.querySelectorAll('.server-status').forEach(el => {
-    el.textContent = 'Online';
-    el.classList.add('online');
+async function api(path, options = {}) {
+  const res = await fetch('/api/' + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options
   });
-});
+  return res.json();
+}
 
-socket.on('disconnect', () => {
+function setOnline(online) {
   document.querySelectorAll('.server-status').forEach(el => {
-    el.textContent = 'Offline';
-    el.classList.remove('online');
+    el.textContent = online ? 'Online' : 'Offline';
+    el.classList.toggle('online', online);
   });
-});
+}
 
-socket.on('state', (state) => {
-  if (onStateCallback) onStateCallback(state);
-});
+async function pollState() {
+  if (!roomCode || !playerId) return;
+  try {
+    const state = await api(`poll?code=${roomCode}&playerId=${playerId}`);
+    if (state.error) return;
+    setOnline(true);
+    if (onStateCallback) onStateCallback(state);
+  } catch {
+    setOnline(false);
+  }
+}
+
+function startPolling() {
+  stopPolling();
+  pollState();
+  pollTimer = setInterval(pollState, 800);
+}
+
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
 
 function setupLobby(game, onJoined) {
   const nameInput = document.getElementById('player-name');
@@ -46,27 +64,47 @@ function setupLobby(game, onJoined) {
     gamePanel.classList.remove('hidden');
     roomCodeEl.textContent = 'Room: ' + roomCode;
     showError('');
+    startPolling();
     onJoined(res);
   }
 
-  createBtn.addEventListener('click', () => {
+  createBtn.addEventListener('click', async () => {
     const name = nameInput.value.trim();
     if (name.length < 2) { showError('Enter your name (2+ chars)'); return; }
-    socket.emit('create-room', { game, name }, joinSuccess);
+    try {
+      const res = await api('rooms', { method: 'POST', body: JSON.stringify({ type: 'create', game, name }) });
+      joinSuccess(res);
+    } catch { showError('Server error'); }
   });
 
-  joinBtn.addEventListener('click', () => {
+  joinBtn.addEventListener('click', async () => {
     const name = nameInput.value.trim();
     const code = joinCode.value.trim().toUpperCase();
     if (name.length < 2) { showError('Enter your name'); return; }
     if (code.length < 4) { showError('Enter room code'); return; }
-    socket.emit('join-room', { code, name }, joinSuccess);
+    try {
+      const res = await api('rooms', { method: 'POST', body: JSON.stringify({ type: 'join', code, name }) });
+      joinSuccess(res);
+    } catch { showError('Server error'); }
   });
 
   const params = new URLSearchParams(location.search);
   if (params.get('code')) joinCode.value = params.get('code');
+  setOnline(true);
 }
 
 function onState(cb) { onStateCallback = cb; }
 
-function emit(event, data, cb) { socket.emit(event, data, cb || (() => {})); }
+async function emit(action, data = {}, cb) {
+  if (!roomCode || !playerId) return;
+  try {
+    const res = await api('game', {
+      method: 'POST',
+      body: JSON.stringify({ code: roomCode, playerId, action, ...data })
+    });
+    if (res.state && onStateCallback) onStateCallback(res.state);
+    if (cb) cb(res.result || res);
+  } catch (e) {
+    if (cb) cb({ error: 'Network error' });
+  }
+}
