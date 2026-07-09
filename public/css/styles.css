@@ -351,32 +351,29 @@ input:focus {
   gap: 0.5rem; flex-wrap: wrap; min-height: 100px;
 }
 
-/* Playing cards — always high contrast */
+/* Playing cards — chibi art images */
 .playing-card {
   position: relative;
-  width: 64px; height: 90px;
-  background: var(--card-playing-bg);
-  border: 1px solid #dadce0;
+  width: 72px;
+  height: 101px;
   border-radius: var(--radius-sm);
-  font-weight: 700;
   box-shadow: var(--shadow-md);
   animation: dealCard 0.3s ease-out;
   flex-shrink: 0;
+  overflow: hidden;
+  background: transparent;
+  border: none;
 }
-.playing-card.red { color: var(--card-red); }
-.playing-card.black { color: var(--card-black); }
-.playing-card .card-corner {
-  position: absolute; font-size: 0.7rem; line-height: 1.1;
-  display: flex; flex-direction: column; align-items: center;
+.playing-card .card-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.playing-card .card-corner.top { top: 4px; left: 5px; }
-.playing-card .card-corner.bottom { bottom: 4px; right: 5px; transform: rotate(180deg); }
-.playing-card .card-suit.center { font-size: 1.5rem; }
-.playing-card.hidden { background: transparent; border: none; box-shadow: none; }
-.playing-card.hidden .card-back {
-  width: 100%; height: 100%; border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, #1a73e8, #174ea6);
-  border: 2px solid rgba(255,255,255,0.3);
+.playing-card.hidden {
   box-shadow: var(--shadow-md);
 }
 
@@ -518,7 +515,7 @@ input:focus {
 @media (max-width: 600px) {
   .site-header { padding: 0.65rem 1rem; }
   .hero h2 { font-size: 1.6rem; }
-  .playing-card { width: 54px; height: 76px; }
+  .playing-card { width: 58px; height: 81px; }
   .bac-hands { grid-template-columns: 1fr; }
   .game-panel { padding: 1rem; }
 }
