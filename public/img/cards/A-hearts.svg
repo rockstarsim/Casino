@@ -2,53 +2,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 196" width="140" height="196">
   
     <defs>
+      <clipPath id="artZone">
+        <rect x="14" y="52" width="112" height="132" rx="8"/>
+      </clipPath>
       <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#fffef9"/>
-        <stop offset="100%" stop-color="#f8f4ea"/>
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fff1f2"/>
       </linearGradient>
       <linearGradient id="frameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#f87171"/>
-        <stop offset="100%" stop-color="#dc2626"/>
+        <stop offset="0%" stop-color="#fda4af"/>
+        <stop offset="100%" stop-color="#e11d48"/>
       </linearGradient>
       <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity="0.18"/>
       </filter>
     </defs>
     <rect x="2" y="2" width="136" height="192" rx="12" fill="url(#frameGrad)" filter="url(#softShadow)"/>
-    <rect x="6" y="6" width="128" height="184" rx="10" fill="url(#cardBg)" stroke="#dc2626" stroke-width="1.5" opacity="0.95"/>
-    <rect x="10" y="10" width="120" height="176" rx="8" fill="none" stroke="#f87171" stroke-width="0.8" opacity="0.4"/>
-
-    <text x="18" y="30" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#dc2626">A</text>
-    <text x="18" y="48" font-family="Georgia, serif" font-size="16" fill="#dc2626">♥</text>
-
-    <text x="122" y="182" font-family="Georgia, serif" font-size="20" font-weight="700" fill="#dc2626" text-anchor="end" transform="rotate(180 122 182)">A</text>
-    <text x="122" y="164" font-family="Georgia, serif" font-size="16" fill="#dc2626" text-anchor="end" transform="rotate(180 122 164)">♥</text>
+    <rect x="6" y="6" width="128" height="184" rx="10" fill="url(#cardBg)" stroke="#e11d48" stroke-width="2"/>
+    <rect x="14" y="52" width="112" height="132" rx="8" fill="#fff1f2" opacity="0.35" stroke="#fda4af" stroke-width="1" stroke-dasharray="4 3"/>
   
   
-    <g>
-      <path d="M 70 158 C 60 146 60 160 70 166 C 80 160 80 146 70 158 Z" fill="#dc2626" opacity="0.35"/>
+    <g clip-path="url(#artZone)">
       
-    <ellipse cx="70" cy="146" rx="22" ry="18" fill="#6366f1"/>
-    <ellipse cx="70" cy="142" rx="18" ry="8" fill="rgba(255,255,255,0.15)"/>
+    <ellipse cx="70" cy="160" rx="14" ry="10" fill="#3a86ff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="70" cy="154" rx="18" ry="14" fill="#3a86ff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="70" cy="150" rx="14" ry="6" fill="#fff" opacity="0.2" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
   
-      <ellipse cx="48" cy="144" rx="7" ry="5" fill="#6366f1" transform="rotate(10 48 144)"/>
-      <ellipse cx="92" cy="144" rx="7" ry="5" fill="#6366f1" transform="rotate(-10 92 144)"/>
+      <ellipse cx="48" cy="146" rx="6" ry="4.5" fill="#3a86ff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="90" cy="136" rx="6" ry="4.5" fill="#3a86ff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <circle cx="96" cy="128" r="7" fill="#ffcba4" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
     
-      <ellipse cx="70" cy="112" rx="26" ry="24" fill="#fde68a"/>
-      <ellipse cx="70" cy="90" rx="30" ry="26" fill="#78716c"/><circle cx="52" cy="74" r="10" fill="#78716c"/><circle cx="88" cy="74" r="10" fill="#78716c"/>
+      <ellipse cx="70" cy="120" rx="30" ry="28" fill="#f5c99a" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
       
-      <ellipse cx="70" cy="64" rx="14" ry="4" fill="none" stroke="#fbbf24" stroke-width="2"/>
-      <path d="M 60 58 Q 70 46 80 58" fill="#fef08a" opacity="0.8"/>
+      <path d="M 38 106 L 46 68 L 60 96 L 70 62 L 80 96 L 94 68 L 102 106 Z" fill="#ffd166" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M 62 74 L 70 66 L 76 82 Z" fill="#ffd166" opacity="0.55" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    
+      <path d="M 70 60 C 60 48 60 64 70 68 C 80 64 80 48 70 60 Z" fill="#fb7185" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="70" cy="56" rx="16" ry="5" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M 58 50 Q 70 36 82 50" fill="#fef08a" opacity="0.85" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
     
       
-    <ellipse cx="52" cy="116" rx="5" ry="3" fill="#fca5a5" opacity="0.55"/>
-    <ellipse cx="88" cy="116" rx="5" ry="3" fill="#fca5a5" opacity="0.55"/>
-  
+        <ellipse cx="50" cy="128" rx="7" ry="4" fill="#ffb4b4" opacity="0.65" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <ellipse cx="90" cy="128" rx="7" ry="4" fill="#ffb4b4" opacity="0.65" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
       
-      <path d="M 54 108 Q 60 100 66 108" stroke="#1e293b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-      <path d="M 74 108 Q 80 100 86 108" stroke="#1e293b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-    
-      <path d="M 65 122 Q 70 127 75 122" stroke="#be123c" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      
+    <ellipse cx="58" cy="114" rx="9" ry="11" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="82" cy="114" rx="9" ry="11" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="58" cy="115" rx="6" ry="8" fill="#1a1a2e" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="82" cy="115" rx="6" ry="8" fill="#1a1a2e" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="60" cy="111" r="3.2" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="84" cy="111" r="3.2" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="62" cy="118" r="1.5" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="86" cy="118" r="1.5" fill="#fff" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="56" cy="116" r="0.8" fill="#7dd3fc" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="80" cy="116" r="0.8" fill="#7dd3fc" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+  
+      <ellipse cx="70" cy="132" rx="3" ry="2" fill="#ffb4b4" opacity="0.5" stroke="#3d2314" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M 64 136 Q 70 142 76 136" fill="none" stroke="#3d2314" stroke-width="2.2" stroke-linecap="round"/>
     </g>
   
 </svg>

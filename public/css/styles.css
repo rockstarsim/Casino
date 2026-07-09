@@ -351,7 +351,7 @@ input:focus {
   gap: 0.5rem; flex-wrap: wrap; min-height: 100px;
 }
 
-/* Playing cards — chibi art images */
+/* Playing cards — chibi art + readable rank overlays */
 .playing-card {
   position: relative;
   width: 72px;
@@ -361,8 +361,8 @@ input:focus {
   animation: dealCard 0.3s ease-out;
   flex-shrink: 0;
   overflow: hidden;
-  background: transparent;
-  border: none;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 .playing-card .card-img {
   display: block;
@@ -375,7 +375,41 @@ input:focus {
 }
 .playing-card.hidden {
   box-shadow: var(--shadow-md);
+  border: none;
 }
+.card-index {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  padding: 2px 4px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  line-height: 1;
+  pointer-events: none;
+}
+.card-index.top-left { top: 3px; left: 3px; }
+.card-index.bottom-right { bottom: 3px; right: 3px; transform: rotate(180deg); }
+.card-rank {
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-family: Georgia, 'Times New Roman', serif;
+  letter-spacing: -0.02em;
+}
+.card-suit {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 1px;
+}
+.playing-card.red .card-rank,
+.playing-card.red .card-suit { color: #c5221f; }
+.playing-card.black .card-rank,
+.playing-card.black .card-suit { color: #202124; }
 
 @keyframes dealCard {
   from { transform: translateY(-12px) scale(0.92); opacity: 0; }
@@ -512,10 +546,168 @@ input:focus {
 .holdem-seats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; }
 .hole-cards { display: flex; justify-content: center; gap: 0.25rem; margin: 0.5rem 0; }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .site-header { padding: 0.65rem 1rem; }
   .hero h2 { font-size: 1.6rem; }
   .playing-card { width: 58px; height: 81px; }
+  .card-rank { font-size: 0.78rem; }
+  .card-suit { font-size: 0.62rem; }
+  .card-index { min-width: 1.1rem; padding: 1px 3px; }
   .bac-hands { grid-template-columns: 1fr; }
   .game-panel { padding: 1rem; }
+}
+
+/* ── Mobile game layout: controls always visible, no scroll to bet/deal ── */
+@media (max-width: 640px) {
+  body.game-page {
+    height: 100dvh;
+    height: 100svh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.game-page .site-header {
+    padding: 0.35rem 0.65rem;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  body.game-page .header-left h1 { font-size: 0.82rem; }
+  body.game-page .back-link { font-size: 0.72rem; padding: 0.2rem 0.45rem; }
+  body.game-page .mode-badge { display: none; }
+  body.game-page .chip-label { display: none; }
+  body.game-page .chip-amount { font-size: 0.82rem; }
+  body.game-page .theme-toggle { width: 32px; height: 32px; }
+
+  body.game-page .game-panel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.35rem;
+    padding-bottom: calc(var(--mobile-controls-h, 108px) + 0.35rem);
+    max-width: none;
+    overflow: hidden;
+  }
+
+  body.game-page .table-felt {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0.45rem 0.35rem;
+    margin-bottom: 0;
+    min-height: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  body.game-page .dealer-area {
+    margin-bottom: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  body.game-page .dealer-persona {
+    padding: 0.3rem 0.45rem;
+    margin-bottom: 0.25rem;
+    gap: 0.45rem;
+  }
+
+  body.game-page .avatar-frame.dealer-frame { width: 32px; height: 32px; }
+  body.game-page .dealer-title { font-size: 0.75rem; }
+  body.game-page .score-badge { font-size: 0.65rem; padding: 0.1rem 0.45rem; }
+
+  body.game-page .card-row {
+    min-height: auto;
+    gap: 0.18rem;
+  }
+
+  body.game-page .game-message {
+    margin: 0.15rem 0;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  body.game-page .players-grid {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.28rem;
+    align-content: start;
+  }
+
+  body.game-page .player-seat,
+  body.game-page .holdem-seat {
+    padding: 0.3rem;
+  }
+
+  body.game-page .player-header {
+    gap: 0.3rem;
+    margin-bottom: 0.2rem;
+  }
+
+  body.game-page .avatar-frame {
+    width: 26px;
+    height: 26px;
+    border-width: 1.5px;
+  }
+
+  body.game-page .player-name { font-size: 0.68rem; }
+  body.game-page .player-chips { font-size: 0.6rem; }
+  body.game-page .player-bet { font-size: 0.6rem; margin: 0.1rem 0; }
+  body.game-page .hand-total { font-size: 0.62rem; margin-top: 0.15rem; }
+  body.game-page .hand-total strong { font-size: 0.72rem; }
+  body.game-page .role-badge { font-size: 0.48rem; padding: 0.08rem 0.28rem; }
+
+  body.game-page .playing-card {
+    width: 36px;
+    height: 50px;
+  }
+
+  body.game-page .card-rank { font-size: 0.58rem; }
+  body.game-page .card-suit { font-size: 0.48rem; }
+  body.game-page .card-index { min-width: 0.85rem; padding: 1px 2px; border-width: 1px; }
+
+  body.game-page .controls-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    margin: 0;
+    padding: 0.4rem 0.45rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+    gap: 0.3rem;
+    flex-direction: column;
+  }
+
+  body.game-page .bet-controls,
+  body.game-page .action-controls {
+    width: 100%;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  body.game-page .controls-panel .btn {
+    padding: 0.38rem 0.55rem;
+    font-size: 0.68rem;
+    min-height: 32px;
+  }
+
+  body.game-page .controls-panel input[type=number] {
+    width: 56px;
+    padding: 0.3rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  body.game-page .bet-controls label { font-size: 0.68rem; }
+  body.game-page .mode-links { display: none; }
+
+  body.game-page .holdem-seats { grid-template-columns: repeat(2, 1fr); }
+  body.game-page .community-row { margin: 0.35rem 0; }
+  body.game-page .pot-display { font-size: 0.75rem; margin-bottom: 0.35rem; padding: 0.25rem 0.65rem; }
 }
