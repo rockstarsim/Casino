@@ -2,18 +2,23 @@ function formatMoney(amount) {
   return '$' + (amount || 0).toLocaleString('en-US');
 }
 
+const SUIT_FILES = { '♠': 'spades', '♥': 'hearts', '♦': 'diamonds', '♣': 'clubs' };
+
+function cardImageSrc(card) {
+  const suit = SUIT_FILES[card.suit];
+  if (!suit) return 'img/cards/back.svg';
+  return `img/cards/${card.rank}-${suit}.svg`;
+}
+
 function createCardElement(card) {
   const el = document.createElement('div');
+  el.className = 'playing-card';
   if (card?.hidden) {
-    el.className = 'playing-card hidden';
-    el.innerHTML = '<div class="card-back"></div>';
+    el.classList.add('hidden');
+    el.innerHTML = '<img class="card-img" src="img/cards/back.svg" alt="Hidden card" draggable="false">';
   } else if (card) {
-    const suitClass = card.red ? 'red' : 'black';
-    el.className = 'playing-card ' + suitClass;
-    el.innerHTML = `
-      <span class="card-corner top">${card.rank}<span class="card-suit">${card.suit}</span></span>
-      <span class="card-suit center">${card.suit}</span>
-      <span class="card-corner bottom">${card.rank}<span class="card-suit">${card.suit}</span></span>`;
+    const src = cardImageSrc(card);
+    el.innerHTML = `<img class="card-img" src="${src}" alt="${card.rank}${card.suit}" draggable="false">`;
   }
   return el;
 }
