@@ -1,5 +1,5 @@
 setupLobby('blackjack', () => {
-  onState(render);
+  onState(renderBlackjackState);
 });
 
 const dealerCards = document.getElementById('dealer-cards');
@@ -27,47 +27,49 @@ standBtn.onclick = () => emit('bj-stand');
 doubleBtn.onclick = () => emit('bj-double');
 newRoundBtn.onclick = () => emit('bj-new-round');
 
-function render(state) {
+function renderBlackjackState(state) {
   if (!state) return;
-
   renderCards(dealerCards, state.dealer.hand);
-  dealerScore.textContent = state.dealer.total;
+
+  const dealerHeader = document.getElementById('dealer-header');
+  if (dealerHeader) {
+    dealerHeader.innerHTML = buildDealerHeader(state.dealer.total);
+  } else if (dealerScore) {
+    dealerScore.textContent = state.dealer.total;
+  }
 
   playersArea.innerHTML = '';
   for (const p of state.players) {
     const seat = document.createElement('div');
     seat.className = 'player-seat' + (p.isYou ? ' is-you' : '') + (state.currentTurn === p.id ? ' active-turn' : '');
-    seat.innerHTML = `
-      <div class="player-name">${p.name}${p.isYou ? ' (You)' : ''}</div>
-      <div class="player-chips">${formatMoney(p.chips)}</div>
-      <div class="player-bet">${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}</div>
-      <div class="card-row" id="seat-${p.id}"></div>
-      <div>Total: ${p.total || 0} ${p.result ? `<span class="result-${p.result}">${p.result}</span>` : ''}</div>
-    `;
+    seat.innerHTML = buildSeatCard(p, {
+      bet: p.bet ? `<div class="player-bet">Bet: ${formatMoney(p.bet)}</div>` : '',
+      total: p.hand?.length ? `<div class="hand-total">Total: <strong>${p.total || 0}</strong></div>` : '',
+      result: p.result ? `<span class="result-tag result-${p.result}">${p.result}</span>` : ''
+    });
     playersArea.appendChild(seat);
-    renderCards(seat.querySelector('.card-row'), p.hand);
+    renderCards(seat.querySelector('.seat-cards'), p.hand);
   }
 
   const me = state.players.find(p => p.isYou);
   const phase = state.phase;
 
   if (phase === 'betting') {
-    messageEl.textContent = me?.bet ? 'Waiting for other bets...' : 'Place your bet.';
+    messageEl.textContent = me?.bet ? 'Waiting for other players...' : 'Place your bet.';
     betBtn.disabled = !!me?.bet;
     dealBtn.disabled = !me?.bet;
-    hitBtn.disabled = true; standBtn.disabled = true; doubleBtn.disabled = true;
+    hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = true;
     newRoundBtn.disabled = true;
   } else if (phase === 'playing') {
     messageEl.textContent = state.yourTurn ? 'Your turn!' : `Waiting for ${state.players.find(p => p.id === state.currentTurn)?.name || 'player'}...`;
-    betBtn.disabled = true; dealBtn.disabled = true;
+    betBtn.disabled = dealBtn.disabled = true;
     hitBtn.disabled = !state.yourTurn;
     standBtn.disabled = !state.yourTurn;
     doubleBtn.disabled = !state.yourTurn || (me?.hand?.length !== 2);
     newRoundBtn.disabled = true;
   } else if (phase === 'results' || phase === 'dealer') {
     messageEl.textContent = 'Round complete!';
-    betBtn.disabled = true; dealBtn.disabled = true;
-    hitBtn.disabled = true; standBtn.disabled = true; doubleBtn.disabled = true;
+    betBtn.disabled = dealBtn.disabled = hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = true;
     newRoundBtn.disabled = false;
   }
 }

@@ -37,12 +37,10 @@ function render() {
   playerTotalEl.textContent = playerTotal;
   bankerTotalEl.textContent = bankerTotal;
 
-  playersArea.innerHTML = players.map(p => `
-    <div class="player-row${p.id === humanId ? ' is-you' : ''}${p.isAi ? ' ai-player' : ''}">
-      <span><strong>${p.name}</strong>${p.isAi ? ' 🤖' : ''} — ${formatMoney(p.chips)}</span>
-      <span>${p.bets.player ? 'P:$'+p.bets.player+' ' : ''}${p.bets.banker ? 'B:$'+p.bets.banker+' ' : ''}${p.bets.tie ? 'T:$'+p.bets.tie : ''}${p.result ? ' → '+p.result : ''}</span>
-    </div>
-  `).join('');
+  playersArea.innerHTML = players.map(p => {
+    if (p.id === humanId) p.isYou = true;
+    return buildPlayerRow(p);
+  }).join('');
 
   const hasBets = players.some(p => p.bets.player + p.bets.banker + p.bets.tie > 0);
   if (phase === 'betting') {

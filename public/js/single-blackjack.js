@@ -21,7 +21,7 @@ const balanceEl = document.getElementById('balance');
 function init() {
   const aiNames = pickAiNames(3);
   players = [
-    { id: humanId, name: 'You', chips: getBalance(), bet: 0, hand: [], status: 'waiting', isAi: false, result: null },
+    { id: humanId, name: 'You', chips: getBalance(), bet: 0, hand: [], status: 'waiting', isAi: false, isYou: true, result: null },
     ...aiNames.map(n => ({ id: uid(), name: n, chips: 10000, bet: 0, hand: [], status: 'waiting', isAi: true, result: null }))
   ];
   updateChipDisplay(balanceEl, getBalance());
@@ -33,23 +33,29 @@ function human() { return players.find(p => p.id === humanId); }
 function render() {
   const hideDealer = phase === 'playing';
   renderCards(dealerCards, hideDealer && dealer.hand.length ? [dealer.hand[0], { hidden: true }] : dealer.hand);
-  dealerScore.textContent = hideDealer ? '?' : (dealer.hand.length ? blackjackTotal(dealer.hand) : 0);
-
-  playersArea.innerHTML = '';
   players.forEach(p => {
+    assignAvatarSeed(p);
+    if (p.id === humanId) p.isYou = true;
     const seat = document.createElement('div');
     seat.className = 'player-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '');
     if (p.isAi) seat.classList.add('ai-player');
-    seat.innerHTML = `
-      <div class="player-name">${p.name}${p.isAi ? ' 🤖' : ''}</div>
-      <div class="player-chips">${formatMoney(p.chips)}</div>
-      <div class="player-bet">${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}</div>
-      <div class="card-row"></div>
-      <div>Total: ${p.hand.length ? blackjackTotal(p.hand) : 0} ${p.result ? `<span class="result-${p.result}">${p.result}</span>` : ''}</div>
-    `;
+    const total = p.hand.length ? blackjackTotal(p.hand) : 0;
+  seat.innerHTML = buildSeatCard(p, {
+      bet: p.bet ? `<div class="player-bet">Bet: ${formatMoney(p.bet)}</div>` : '',
+      total: p.hand.length ? `<div class="hand-total">Total: <strong>${total}</strong></div>` : '',
+      result: p.result ? `<span class="result-tag result-${p.result}">${p.result}</span>` : ''
+    });
     playersArea.appendChild(seat);
-    renderCards(seat.querySelector('.card-row'), p.hand);
+    renderCards(seat.querySelector('.seat-cards'), p.hand);
   });
+
+  const dealerHeader = document.getElementById('dealer-header');
+  if (dealerHeader) {
+    const score = hideDealer ? '?' : (dealer.hand.length ? blackjackTotal(dealer.hand) : 0);
+    dealerHeader.innerHTML = buildDealerHeader(score);
+  } else if (dealerScore) {
+    dealerScore.textContent = hideDealer ? '?' : (dealer.hand.length ? blackjackTotal(dealer.hand) : 0);
+  }
 
   const me = human();
   if (phase === 'betting') {

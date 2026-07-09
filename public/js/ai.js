@@ -1,8 +1,5 @@
-const AI_NAMES = ['Victor', 'Sofia', 'James', 'Luna', 'Marcus', 'Elena', 'Dante', 'Aria'];
-
 function pickAiNames(count) {
-  const pool = [...AI_NAMES].sort(() => Math.random() - 0.5);
-  return pool.slice(0, count);
+  return pickCharacterNames(count);
 }
 
 function aiBetAmount(chips) {

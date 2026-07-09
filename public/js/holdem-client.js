@@ -34,12 +34,10 @@ function render(state) {
     const seat = document.createElement('div');
     seat.className = 'holdem-seat' + (p.isYou ? ' is-you' : '') + (state.currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '');
     seat.innerHTML = `
-      <div class="player-name">${p.name}${p.isYou ? ' (You)' : ''}</div>
-      <div class="player-chips">${formatMoney(p.chips)}</div>
-      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction || ''}</div>
-      <div class="hole-cards" id="hole-${p.id}"></div>
-      ${p.handName ? '<div style="color:var(--gold);font-size:0.8rem">'+p.handName+'</div>' : ''}
-    `;
+      ${buildPlayerHeader(p)}
+      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction ? `<span class="action-tag">${p.lastAction}</span>` : ''}</div>
+      <div class="hole-cards"></div>
+      ${p.handName ? `<div class="hand-name">${p.handName}</div>` : ''}`;
     playersArea.appendChild(seat);
     renderCards(seat.querySelector('.hole-cards'), p.hole);
   }

@@ -47,18 +47,18 @@ function render() {
 
   playersArea.innerHTML = '';
   players.forEach(p => {
+    assignAvatarSeed(p);
+    if (p.id === humanId) p.isYou = true;
     const seat = document.createElement('div');
     seat.className = 'holdem-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '');
     if (p.isAi) seat.classList.add('ai-player');
     const holes = (p.id === humanId || showHoles) ? p.hole : p.hole.map(() => ({ hidden: true }));
     const handName = showHoles && p.hole.length && community.length >= 3 ? bestHoldemHand(p.hole, community)?.name : '';
     seat.innerHTML = `
-      <div class="player-name">${p.name}${p.isAi ? ' 🤖' : ''}</div>
-      <div class="player-chips">${formatMoney(p.chips)}</div>
-      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction || ''}</div>
+      ${buildPlayerHeader(p)}
+      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction ? `<span class="action-tag">${p.lastAction}</span>` : ''}</div>
       <div class="hole-cards"></div>
-      ${handName ? '<div style="color:var(--gold);font-size:0.8rem">'+handName+'</div>' : ''}
-    `;
+      ${handName ? `<div class="hand-name">${handName}</div>` : ''}`;
     playersArea.appendChild(seat);
     renderCards(seat.querySelector('.hole-cards'), holes);
   });

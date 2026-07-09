@@ -33,12 +33,7 @@ function render(state) {
   playerTotal.textContent = state.playerTotal;
   bankerTotal.textContent = state.bankerTotal;
 
-  playersArea.innerHTML = state.players.map(p => `
-    <div class="player-row${p.isYou ? ' is-you' : ''}">
-      <span><strong>${p.name}</strong>${p.isYou ? ' (You)' : ''} — ${formatMoney(p.chips)}</span>
-      <span>${p.bets.player ? 'P:$'+p.bets.player+' ' : ''}${p.bets.banker ? 'B:$'+p.bets.banker+' ' : ''}${p.bets.tie ? 'T:$'+p.bets.tie : ''}${p.result ? ' → '+p.result : ''}</span>
-    </div>
-  `).join('');
+  playersArea.innerHTML = state.players.map(p => buildPlayerRow(p)).join('');
 
   if (state.phase === 'betting') {
     messageEl.textContent = 'Place bets on Player, Banker, or Tie.';
