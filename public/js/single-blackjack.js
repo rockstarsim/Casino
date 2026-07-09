@@ -72,13 +72,13 @@ function render() {
 
   const me = human();
   if (phase === 'betting') {
-    messageEl.textContent = me.bet ? 'Friends are betting...' : 'Pick your bet, then tap Put Chips In!';
+    messageEl.textContent = me.bet ? 'AI players betting...' : 'Place your bet.';
     betBtn.disabled = !!me.bet;
     dealBtn.disabled = true;
     hitBtn.disabled = standBtn.disabled = doubleBtn.disabled = true;
     newRoundBtn.disabled = true;
   } else if (phase === 'playing') {
-    messageEl.textContent = currentTurn === humanId ? 'Your turn — pick a button below!' : `${players.find(p => p.id === currentTurn)?.name} is choosing...`;
+    messageEl.textContent = currentTurn === humanId ? 'Your turn!' : `${players.find(p => p.id === currentTurn)?.name} is thinking...`;
     betBtn.disabled = dealBtn.disabled = true;
     const myTurn = currentTurn === humanId;
     hitBtn.disabled = !myTurn;
@@ -211,7 +211,7 @@ betBtn.onclick = async () => {
   setBalance(me.chips);
   render();
   await aiPlaceBets();
-  if (allBetsPlaced()) { dealBtn.disabled = false; messageEl.textContent = 'Everyone bet! Tap Deal Cards!'; }
+  if (allBetsPlaced()) { dealBtn.disabled = false; messageEl.textContent = 'Ready to deal!'; }
 };
 
 dealBtn.onclick = () => startDeal();

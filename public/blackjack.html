@@ -45,65 +45,24 @@
       <p id="message" class="game-message">Place your bet.</p>
       <div id="players-area" class="players-grid"></div>
     </div>
-    <div class="controls-panel kid-controls">
-      <section class="control-step">
-        <h4 class="control-step-title">Step 1 — Pick your bet</h4>
-        <div class="bet-controls">
-          <span class="bet-label">How much money?</span>
-          <div class="bet-amount-row">
-            <span class="bet-dollar">$</span>
-            <input type="number" id="bet-amount" value="100" min="10" step="10" aria-label="Bet amount">
-          </div>
-          <div class="chip-picks">
-            <button type="button" class="chip-pick" data-amount="25">$25</button>
-            <button type="button" class="chip-pick" data-amount="50">$50</button>
-            <button type="button" class="chip-pick" data-amount="100">$100</button>
-            <button type="button" class="chip-pick" data-amount="500">$500</button>
-          </div>
-          <button id="bet-btn" type="button" class="btn-kid btn-kid-primary">
-            <span class="btn-kid-icon">💰</span>
-            <span class="btn-kid-text">Put Chips In</span>
-            <span class="btn-kid-hint">Lock in your bet</span>
-          </button>
-        </div>
-      </section>
-      <section class="control-step">
-        <h4 class="control-step-title">Step 2 — Play your cards</h4>
-        <div class="action-controls action-grid">
-          <button id="deal-btn" type="button" class="btn-kid btn-kid-primary" disabled>
-            <span class="btn-kid-icon">🃏</span>
-            <span class="btn-kid-text">Deal Cards!</span>
-            <span class="btn-kid-hint">Start the round</span>
-          </button>
-          <button id="hit-btn" type="button" class="btn-kid btn-kid-success" disabled>
-            <span class="btn-kid-icon">➕</span>
-            <span class="btn-kid-text">Another Card</span>
-            <span class="btn-kid-hint">Try to get closer to 21</span>
-          </button>
-          <button id="stand-btn" type="button" class="btn-kid" disabled>
-            <span class="btn-kid-icon">✋</span>
-            <span class="btn-kid-text">I'm Done!</span>
-            <span class="btn-kid-hint">Keep my cards</span>
-          </button>
-          <button id="double-btn" type="button" class="btn-kid" disabled>
-            <span class="btn-kid-icon">✖️</span>
-            <span class="btn-kid-text">Double Bet</span>
-            <span class="btn-kid-hint">2× bet, 1 card</span>
-          </button>
-          <button id="new-round-btn" type="button" class="btn-kid btn-kid-primary" disabled>
-            <span class="btn-kid-icon">🔄</span>
-            <span class="btn-kid-text">Play Again!</span>
-            <span class="btn-kid-hint">Start a new round</span>
-          </button>
-        </div>
-      </section>
+    <div class="controls-panel">
+      <div class="bet-controls">
+        <label>Bet: $<input type="number" id="bet-amount" value="100" min="10" step="10"></label>
+        <button id="bet-btn" class="btn btn-gold">Place Bet</button>
+      </div>
+      <div class="action-controls">
+        <button id="deal-btn" class="btn btn-gold" disabled>Deal Cards</button>
+        <button id="hit-btn" class="btn" disabled>Hit</button>
+        <button id="stand-btn" class="btn" disabled>Stand</button>
+        <button id="double-btn" class="btn" disabled>Double</button>
+        <button id="new-round-btn" class="btn btn-outline" disabled>New Round</button>
+      </div>
     </div>
   </div>
 
   <script src="js/shared.js"></script>
   <script src="js/avatars.js"></script>
   <script src="js/multiplayer.js"></script>
-  <script src="js/controls-ui.js"></script>
   <script src="js/blackjack-client.js"></script>
 </body>
 </html>

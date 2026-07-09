@@ -51,62 +51,23 @@
       <p id="message" class="game-message">Place your bets.</p>
       <div id="players-area" class="players-list"></div>
     </div>
-    <div class="controls-panel kid-controls">
-      <section class="control-step">
-        <h4 class="control-step-title">Step 1 — Who will win?</h4>
-        <div class="bet-controls">
-          <span class="bet-label">How much money?</span>
-          <div class="bet-amount-row">
-            <span class="bet-dollar">$</span>
-            <input type="number" id="bet-amount" value="100" min="10" step="10" aria-label="Bet amount">
-          </div>
-          <div class="chip-picks">
-            <button type="button" class="chip-pick" data-amount="25">$25</button>
-            <button type="button" class="chip-pick" data-amount="50">$50</button>
-            <button type="button" class="chip-pick" data-amount="100">$100</button>
-            <button type="button" class="chip-pick" data-amount="500">$500</button>
-          </div>
-          <div class="action-controls action-grid">
-            <button id="bet-player-btn" type="button" class="btn-kid btn-kid-baccarat-player">
-              <span class="btn-kid-icon">🔵</span>
-              <span class="btn-kid-text">Blue Team</span>
-              <span class="btn-kid-hint">Bet on Player</span>
-            </button>
-            <button id="bet-banker-btn" type="button" class="btn-kid btn-kid-baccarat-banker">
-              <span class="btn-kid-icon">🔴</span>
-              <span class="btn-kid-text">Red Team</span>
-              <span class="btn-kid-hint">Bet on Banker</span>
-            </button>
-            <button id="bet-tie-btn" type="button" class="btn-kid btn-kid-baccarat-tie">
-              <span class="btn-kid-icon">🤝</span>
-              <span class="btn-kid-text">It's a Tie!</span>
-              <span class="btn-kid-hint">Both same score</span>
-            </button>
-          </div>
-        </div>
-      </section>
-      <section class="control-step">
-        <h4 class="control-step-title">Step 2 — Show the cards</h4>
-        <div class="action-controls action-grid">
-          <button id="deal-btn" type="button" class="btn-kid btn-kid-primary">
-            <span class="btn-kid-icon">🃏</span>
-            <span class="btn-kid-text">Show Cards!</span>
-            <span class="btn-kid-hint">See who wins</span>
-          </button>
-          <button id="new-round-btn" type="button" class="btn-kid btn-kid-primary" disabled>
-            <span class="btn-kid-icon">🔄</span>
-            <span class="btn-kid-text">Play Again!</span>
-            <span class="btn-kid-hint">Next round</span>
-          </button>
-        </div>
-      </section>
+    <div class="controls-panel">
+      <div class="bet-controls">
+        <label>Bet: $<input type="number" id="bet-amount" value="100" min="10" step="10"></label>
+        <button id="bet-player-btn" class="btn">Player</button>
+        <button id="bet-banker-btn" class="btn">Banker</button>
+        <button id="bet-tie-btn" class="btn">Tie (8:1)</button>
+      </div>
+      <div class="action-controls">
+        <button id="deal-btn" class="btn btn-gold">Deal</button>
+        <button id="new-round-btn" class="btn btn-outline" disabled>Next Round</button>
+      </div>
     </div>
   </div>
 
   <script src="js/shared.js"></script>
   <script src="js/avatars.js"></script>
   <script src="js/multiplayer.js"></script>
-  <script src="js/controls-ui.js"></script>
   <script src="js/baccarat-client.js"></script>
 </body>
 </html>

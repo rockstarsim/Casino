@@ -43,56 +43,22 @@
       <p id="message" class="game-message">Waiting for players...</p>
       <div id="players-area" class="holdem-seats"></div>
     </div>
-    <div class="controls-panel kid-controls">
-      <section class="control-step">
-        <h4 class="control-step-title">Start &amp; play</h4>
-        <div class="action-controls action-grid holdem-actions">
-          <button id="start-btn" type="button" class="btn-kid btn-kid-primary">
-            <span class="btn-kid-icon">🎮</span>
-            <span class="btn-kid-text">Start Game!</span>
-            <span class="btn-kid-hint">Deal new cards</span>
-          </button>
-          <button id="fold-btn" type="button" class="btn-kid btn-kid-danger" disabled>
-            <span class="btn-kid-icon">🏳️</span>
-            <span class="btn-kid-text">Give Up</span>
-            <span class="btn-kid-hint">Throw away cards</span>
-          </button>
-          <button id="check-btn" type="button" class="btn-kid" disabled>
-            <span class="btn-kid-icon">⏭️</span>
-            <span class="btn-kid-text">Skip</span>
-            <span class="btn-kid-hint">Don't bet now</span>
-          </button>
-          <button id="call-btn" type="button" class="btn-kid btn-kid-success" disabled>
-            <span class="btn-kid-icon">🤝</span>
-            <span class="btn-kid-text">Match Bet</span>
-            <span class="btn-kid-hint">Pay same amount</span>
-          </button>
-          <button id="raise-btn" type="button" class="btn-kid btn-kid-primary" disabled>
-            <span class="btn-kid-icon">📈</span>
-            <span class="btn-kid-text">Bet More!</span>
-            <span class="btn-kid-hint">Raise the bet</span>
-          </button>
-          <button id="allin-btn" type="button" class="btn-kid btn-kid-danger" disabled>
-            <span class="btn-kid-icon">💥</span>
-            <span class="btn-kid-text">All My Money!</span>
-            <span class="btn-kid-hint">Bet everything</span>
-          </button>
-        </div>
-      </section>
-      <section class="control-step raise-step">
-        <h4 class="control-step-title">Bet more amount</h4>
-        <div class="bet-amount-row">
-          <span class="bet-dollar">$</span>
-          <input type="number" id="raise-amount" value="100" min="50" step="25" disabled aria-label="Raise amount">
-        </div>
-      </section>
+    <div class="controls-panel">
+      <div class="action-controls holdem-actions">
+        <button id="start-btn" class="btn btn-gold">Start Hand</button>
+        <button id="fold-btn" class="btn btn-danger" disabled>Fold</button>
+        <button id="check-btn" class="btn" disabled>Check</button>
+        <button id="call-btn" class="btn" disabled>Call</button>
+        <input type="number" id="raise-amount" value="100" min="50" step="25" disabled>
+        <button id="raise-btn" class="btn btn-gold" disabled>Raise</button>
+        <button id="allin-btn" class="btn" disabled>All In</button>
+      </div>
     </div>
   </div>
 
   <script src="js/shared.js"></script>
   <script src="js/avatars.js"></script>
   <script src="js/multiplayer.js"></script>
-  <script src="js/controls-ui.js"></script>
   <script src="js/holdem-client.js"></script>
 </body>
 </html>
