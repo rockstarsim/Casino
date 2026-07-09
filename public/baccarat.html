@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Baccarat — Casino Royale</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="game-page">
+  <header class="site-header">
+    <a href="/" class="back-link">← Lobby</a>
+    <h1>Baccarat</h1>
+    <div class="room-code" id="room-code"></div>
+  </header>
+
+  <div id="lobby-panel" class="lobby-panel">
+    <h2>Join a Table</h2>
+    <input type="text" id="player-name" placeholder="Your name" maxlength="16">
+    <div class="lobby-actions">
+      <button id="create-room-btn" class="btn btn-gold">Create Room</button>
+      <div class="join-row">
+        <input type="text" id="join-code" placeholder="Room code" maxlength="6">
+        <button id="join-room-btn" class="btn btn-outline">Join</button>
+      </div>
+    </div>
+    <p id="lobby-error" class="error-text"></p>
+  </div>
+
+  <div id="game-panel" class="game-panel hidden">
+    <div class="table-felt">
+      <div class="bac-hands">
+        <div class="bac-side">
+          <h3>Player <span id="player-total" class="score-badge">0</span></h3>
+          <div id="bac-player-cards" class="card-row"></div>
+        </div>
+        <div class="bac-side">
+          <h3>Banker <span id="banker-total" class="score-badge">0</span></h3>
+          <div id="bac-banker-cards" class="card-row"></div>
+        </div>
+      </div>
+      <p id="message" class="game-message">Place your bets.</p>
+      <div id="players-area" class="players-list"></div>
+    </div>
+    <div class="controls-panel">
+      <div class="bet-controls">
+        <label>Bet: $<input type="number" id="bet-amount" value="100" min="10" step="10"></label>
+        <button id="bet-player-btn" class="btn">Player</button>
+        <button id="bet-banker-btn" class="btn">Banker</button>
+        <button id="bet-tie-btn" class="btn">Tie (8:1)</button>
+      </div>
+      <div class="action-controls">
+        <button id="deal-btn" class="btn btn-gold">Deal</button>
+        <button id="new-round-btn" class="btn btn-outline" disabled>Next Round</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/multiplayer.js"></script>
+  <script src="js/baccarat-client.js"></script>
+</body>
+</html>
