@@ -2,42 +2,52 @@ function formatMoney(amount) {
   return '$' + (amount || 0).toLocaleString('en-US');
 }
 
-const SUIT_FILES = { '♠': 'spades', '♥': 'hearts', '♦': 'diamonds', '♣': 'clubs' };
-
-function cardImageSrc(card) {
-  const suit = SUIT_FILES[card.suit];
-  if (!suit) return 'img/cards/back.svg';
-  return `img/cards/${card.rank}-${suit}.svg`;
+function cardKey(card) {
+  if (card?.hidden) return 'hidden';
+  if (!card) return '';
+  return `${card.rank}${card.suit}`;
 }
 
 function createCardElement(card) {
   const el = document.createElement('div');
-  el.className = 'playing-card';
+  el.dataset.cardKey = cardKey(card);
   if (card?.hidden) {
-    el.classList.add('hidden');
-    el.innerHTML = '<img class="card-img" src="img/cards/back.svg" alt="Hidden card" draggable="false">';
+    el.className = 'playing-card hidden';
+    el.innerHTML = '<div class="card-back"></div>';
   } else if (card) {
-    const src = cardImageSrc(card);
     const suitClass = card.red ? 'red' : 'black';
-    el.classList.add(suitClass);
+    el.className = 'playing-card ' + suitClass;
     el.innerHTML = `
-      <img class="card-img" src="${src}" alt="${card.rank}${card.suit}" draggable="false">
-      <div class="card-index top-left" aria-hidden="true">
+      <span class="card-corner top">
         <span class="card-rank">${card.rank}</span>
         <span class="card-suit">${card.suit}</span>
-      </div>
-      <div class="card-index bottom-right" aria-hidden="true">
+      </span>
+      <span class="card-center"><span class="card-suit">${card.suit}</span></span>
+      <span class="card-corner bottom">
         <span class="card-rank">${card.rank}</span>
         <span class="card-suit">${card.suit}</span>
-      </div>`;
+      </span>`;
   }
   return el;
 }
 
 function renderCards(container, cards) {
   if (!container) return;
-  container.innerHTML = '';
-  (cards || []).forEach(card => container.appendChild(createCardElement(card)));
+  cards = cards || [];
+
+  while (container.children.length > cards.length) {
+    container.removeChild(container.lastChild);
+  }
+
+  cards.forEach((card, i) => {
+    const key = cardKey(card);
+    const existing = container.children[i];
+    if (existing && existing.dataset.cardKey === key) return;
+
+    const el = createCardElement(card);
+    if (existing) container.replaceChild(el, existing);
+    else container.appendChild(el);
+  });
 }
 
 function getPlayerName() {

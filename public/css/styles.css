@@ -351,69 +351,57 @@ input:focus {
   gap: 0.5rem; flex-wrap: wrap; min-height: 100px;
 }
 
-/* Playing cards — chibi art + readable rank overlays */
+/* Playing cards — clean readable faces, no character art */
 .playing-card {
   position: relative;
   width: 72px;
   height: 101px;
+  background: var(--card-playing-bg);
+  border: 2px solid #dadce0;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-md);
-  animation: dealCard 0.3s ease-out;
   flex-shrink: 0;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-weight: 700;
 }
-.playing-card .card-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-  user-select: none;
-  -webkit-user-drag: none;
-}
-.playing-card.hidden {
-  box-shadow: var(--shadow-md);
-  border: none;
-}
-.card-index {
+.playing-card.red { color: var(--card-red); }
+.playing-card.black { color: var(--card-black); }
+.playing-card .card-corner {
   position: absolute;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-width: 1.35rem;
-  padding: 2px 4px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid rgba(0, 0, 0, 0.12);
-  border-radius: 5px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  line-height: 1;
-  pointer-events: none;
+  line-height: 1.05;
+  z-index: 2;
 }
-.card-index.top-left { top: 3px; left: 3px; }
-.card-index.bottom-right { bottom: 3px; right: 3px; transform: rotate(180deg); }
-.card-rank {
-  font-size: 0.95rem;
+.playing-card .card-corner.top { top: 5px; left: 6px; }
+.playing-card .card-corner.bottom { bottom: 5px; right: 6px; transform: rotate(180deg); }
+.playing-card .card-rank {
+  font-size: 1.05rem;
   font-weight: 800;
   font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.02em;
 }
-.card-suit {
-  font-size: 0.75rem;
-  font-weight: 700;
-  margin-top: 1px;
+.playing-card .card-suit { font-size: 0.95rem; font-weight: 700; }
+.playing-card .card-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 }
-.playing-card.red .card-rank,
-.playing-card.red .card-suit { color: #c5221f; }
-.playing-card.black .card-rank,
-.playing-card.black .card-suit { color: #202124; }
-
-@keyframes dealCard {
-  from { transform: translateY(-12px) scale(0.92); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+.playing-card .card-center .card-suit { font-size: 2rem; line-height: 1; }
+.playing-card.hidden {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.playing-card.hidden .card-back {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, #1a73e8, #174ea6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .game-message {
@@ -550,9 +538,9 @@ input:focus {
   .site-header { padding: 0.65rem 1rem; }
   .hero h2 { font-size: 1.6rem; }
   .playing-card { width: 58px; height: 81px; }
-  .card-rank { font-size: 0.78rem; }
-  .card-suit { font-size: 0.62rem; }
-  .card-index { min-width: 1.1rem; padding: 1px 3px; }
+  .playing-card .card-rank { font-size: 0.82rem; }
+  .playing-card .card-suit { font-size: 0.72rem; }
+  .playing-card .card-center .card-suit { font-size: 1.45rem; }
   .bac-hands { grid-template-columns: 1fr; }
   .game-panel { padding: 1rem; }
 }
@@ -667,9 +655,11 @@ input:focus {
     height: 50px;
   }
 
-  body.game-page .card-rank { font-size: 0.58rem; }
-  body.game-page .card-suit { font-size: 0.48rem; }
-  body.game-page .card-index { min-width: 0.85rem; padding: 1px 2px; border-width: 1px; }
+  body.game-page .playing-card .card-rank { font-size: 0.58rem; }
+  body.game-page .playing-card .card-suit { font-size: 0.5rem; }
+  body.game-page .playing-card .card-center .card-suit { font-size: 1rem; }
+  body.game-page .playing-card .card-corner.top { top: 2px; left: 3px; }
+  body.game-page .playing-card .card-corner.bottom { bottom: 2px; right: 3px; }
 
   body.game-page .controls-panel {
     position: fixed;
