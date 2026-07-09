@@ -40,6 +40,30 @@ function human() { return players.find(p => p.id === humanId); }
 function inHand() { return players.filter(p => p.status !== 'waiting' && !p.folded); }
 function allInActive() { return players.some(p => p.lastAction === 'allin' && !p.folded); }
 
+function needsToAct(p) {
+  if (p.folded || p.status !== 'active') return false;
+  if (p.chips === 0) return false;
+  return p.lastAction === null || p.bet < currentBet;
+}
+
+function nextBetter(fromIdx) {
+  const n = players.length;
+  for (let i = 1; i <= n; i++) {
+    const idx = (fromIdx + i) % n;
+    if (needsToAct(players[idx])) return players[idx].id;
+  }
+  return null;
+}
+
+function bettingComplete() {
+  const active = inHand();
+  if (active.length <= 1) return true;
+  return active.every(p => {
+    if (p.chips === 0) return p.lastAction !== null;
+    return p.bet === currentBet && p.lastAction !== null;
+  });
+}
+
 function aiThinkDelay() {
   if (allInActive()) return 60 + Math.random() * 90;
   return 250 + Math.random() * 300;
@@ -110,23 +134,6 @@ function postBlind(idx, amount) {
   p.chips -= pay; p.bet = pay; p.totalBet = pay; pot += pay;
 }
 
-function nextBetter(fromIdx) {
-  const n = players.length;
-  for (let i = 1; i <= n; i++) {
-    const idx = (fromIdx + i) % n;
-    const p = players[idx];
-    if (!p.folded && p.status === 'active' && (p.bet < currentBet || p.lastAction === null))
-      return p.id;
-  }
-  return null;
-}
-
-function bettingComplete() {
-  const active = inHand();
-  if (active.length <= 1) return true;
-  return active.every(p => p.bet === currentBet && p.lastAction !== null);
-}
-
 function startHand() {
   community = []; pot = 0; currentBet = 0; winners = []; round = 'preflop';
   players.forEach(p => {
@@ -151,20 +158,21 @@ function doAction(p, action, raiseAmount) {
   else if (action === 'check') { p.lastAction = 'check'; }
   else if (action === 'call') {
     const pay = Math.min(currentBet - p.bet, p.chips);
-    p.chips -= pay; p.bet += pay; p.totalBet += pay; pot += pay; p.lastAction = 'call';
+    p.chips -= pay; p.bet += pay; p.totalBet += pay; pot += pay;
+    p.lastAction = p.chips === 0 ? 'allin' : 'call';
   } else if (action === 'raise') {
     const raiseTo = Math.max(currentBet + BIG_BLIND, raiseAmount);
     const pay = raiseTo - p.bet;
     if (pay > p.chips) return false;
     p.chips -= pay; pot += pay; p.totalBet += pay; p.bet = raiseTo;
     currentBet = raiseTo;
-    players.forEach(o => { if (o.id !== p.id && !o.folded) o.lastAction = null; });
-    p.lastAction = 'raise';
+    players.forEach(o => { if (o.id !== p.id && !o.folded && o.chips > 0) o.lastAction = null; });
+    p.lastAction = p.chips === 0 ? 'allin' : 'raise';
   } else if (action === 'allin') {
     pot += p.chips; p.bet += p.chips; p.totalBet += p.chips;
     if (p.bet > currentBet) {
       currentBet = p.bet;
-      players.forEach(o => { if (o.id !== p.id && !o.folded) o.lastAction = null; });
+      players.forEach(o => { if (o.id !== p.id && !o.folded && o.chips > 0) o.lastAction = null; });
     }
     p.chips = 0; p.lastAction = 'allin';
   }
@@ -216,6 +224,13 @@ function showdown() {
 async function processTurn() {
   while (currentTurn && phase === 'betting') {
     const p = players.find(x => x.id === currentTurn);
+    if (!p || !needsToAct(p)) {
+      if (bettingComplete()) { advanceRound(); break; }
+      const idx = players.findIndex(x => x.id === currentTurn);
+      currentTurn = nextBetter(idx);
+      if (!currentTurn) { advanceRound(); break; }
+      continue;
+    }
     render();
     if (p.isAi) {
       await delay(aiThinkDelay());
@@ -229,8 +244,9 @@ async function processTurn() {
       else doAction(p, action);
     } else return;
     const idx = players.findIndex(x => x.id === currentTurn);
-    if (bettingComplete()) advanceRound();
-    else currentTurn = nextBetter(idx);
+    if (bettingComplete()) { advanceRound(); break; }
+    currentTurn = nextBetter(idx);
+    if (!currentTurn) { advanceRound(); break; }
   }
 }
 
