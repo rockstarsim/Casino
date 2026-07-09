@@ -1,4 +1,5 @@
 const { newShoe, draw, baccaratTotal, baccaratValue } = require('./deck');
+const { assignCharacterIndex } = require('./avatars');
 
 function createBaccaratRoom(code) {
   return {
@@ -16,7 +17,9 @@ function createBaccaratRoom(code) {
 function addPlayer(room, id, name) {
   if (room.players.find(p => p.id === id)) return room.players.find(p => p.id === id);
   if (room.players.length >= 9) return null;
-  const player = { id, name, chips: 10000, bets: { player: 0, banker: 0, tie: 0 }, seat: room.players.length };
+  const player = assignCharacterIndex(room, {
+    id, name, chips: 10000, bets: { player: 0, banker: 0, tie: 0 }, seat: room.players.length
+  });
   room.players.push(player);
   return player;
 }
@@ -119,7 +122,8 @@ function publicState(room, viewerId) {
     winner: room.winner,
     players: room.players.map(p => ({
       id: p.id, name: p.name, chips: p.chips, bets: p.bets,
-      result: p.result, seat: p.seat, isYou: p.id === viewerId
+      result: p.result, seat: p.seat, characterIndex: p.characterIndex,
+      isYou: p.id === viewerId
     }))
   };
 }

@@ -1,7 +1,8 @@
-const CHARACTER_COUNT = 6;
+const CHARACTER_COUNT = 14;
 
 const CHARACTER_NAMES = [
-  'Yuki', 'Ren', 'Mika', 'Kai', 'Hana', 'Sora', 'Akira', 'Rin', 'Takeshi', 'Mei'
+  'Yuki', 'Ren', 'Mika', 'Kai', 'Hana', 'Sora', 'Akira', 'Rin',
+  'Takeshi', 'Mei', 'Luna', 'Sakura', 'Aiko', 'Nami', 'Yui', 'Emi'
 ];
 
 function hashStr(s) {
@@ -10,14 +11,40 @@ function hashStr(s) {
   return Math.abs(h);
 }
 
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 function pickCharacterNames(count) {
-  const pool = [...CHARACTER_NAMES].sort(() => Math.random() - 0.5);
-  return pool.slice(0, count);
+  return shuffleArray(CHARACTER_NAMES).slice(0, count);
+}
+
+function isYouPlayer(player) {
+  return player.isYou || player.id === 'human' || player.name === 'You';
+}
+
+function assignUniqueCharacters(players) {
+  const pool = shuffleArray([...Array(CHARACTER_COUNT).keys()]);
+  let next = 0;
+  for (const p of players) {
+    if (p.isDealer || isYouPlayer(p)) continue;
+    if (Number.isInteger(p.characterIndex)) continue;
+    p.characterIndex = pool[next++];
+  }
+  return players;
 }
 
 function characterImageFor(player) {
   if (player.isDealer) return 'img/characters/dealer.png';
-  if (player.isYou || player.id === 'human' || player.name === 'You') return 'img/characters/player.png';
+  if (isYouPlayer(player)) return 'img/characters/player.png';
+  if (Number.isInteger(player.characterIndex)) {
+    return `img/characters/char-${player.characterIndex}.png`;
+  }
   const seed = player.avatarSeed || player.id || player.name;
   const idx = hashStr(seed) % CHARACTER_COUNT;
   return `img/characters/char-${idx}.png`;
@@ -32,14 +59,14 @@ function assignAvatarSeed(player) {
 
 function playerBadge(p) {
   if (p.isDealer) return '<span class="role-badge dealer-badge">Dealer</span>';
-  if (p.isYou || p.id === 'human' || p.name === 'You') return '<span class="role-badge you-badge">You</span>';
+  if (isYouPlayer(p)) return '<span class="role-badge you-badge">You</span>';
   if (p.isAi) return '<span class="role-badge ai-badge">Opponent</span>';
   return '<span class="role-badge guest-badge">Player</span>';
 }
 
 function buildPlayerHeader(p) {
   assignAvatarSeed(p);
-  const isYou = p.isYou || p.id === 'human' || p.name === 'You';
+  const isYou = isYouPlayer(p);
   if (isYou) p.isYou = true;
   return `
     <div class="player-header">
@@ -72,7 +99,7 @@ function buildDealerHeader(scoreText) {
 
 function buildPlayerRow(p) {
   assignAvatarSeed(p);
-  const isYou = p.id === 'human' || p.isYou || p.name === 'You';
+  const isYou = isYouPlayer(p);
   const bets = p.bets
     ? `${p.bets.player ? 'Player $'+p.bets.player+' ' : ''}${p.bets.banker ? 'Banker $'+p.bets.banker+' ' : ''}${p.bets.tie ? 'Tie $'+p.bets.tie : ''}`
     : (p.bet ? `Bet ${formatMoney(p.bet)}` : '');
@@ -91,7 +118,6 @@ function buildPlayerRow(p) {
 
 function buildSeatCard(p, extras = {}) {
   assignAvatarSeed(p);
-  const isYou = p.isYou || p.id === 'human' || p.name === 'You';
   return `
     ${buildPlayerHeader(p)}
     ${extras.bet || ''}

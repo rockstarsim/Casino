@@ -25,6 +25,7 @@ function init() {
     { id: humanId, name: 'You', chips: getBalance(), bets: { player: 0, banker: 0, tie: 0 }, isAi: false, result: null },
     ...aiNames.map(n => ({ id: uid(), name: n, chips: 10000, bets: { player: 0, banker: 0, tie: 0 }, isAi: true, result: null }))
   ];
+  assignUniqueCharacters(players);
   updateChipDisplay(balanceEl, getBalance());
   render();
 }
