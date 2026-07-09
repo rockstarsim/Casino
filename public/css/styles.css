@@ -539,6 +539,50 @@ input:focus {
   min-height: 52px;
 }
 
+/* Game pages: controls always visible — only the table scrolls */
+body.game-page {
+  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body.game-page .site-header {
+  flex-shrink: 0;
+  position: relative;
+}
+
+body.game-page .game-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 0.75rem;
+}
+
+body.game-page .table-felt {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.game-page .controls-panel {
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+}
+
+body.game-page .mode-links {
+  display: none;
+}
+
 /* Hold'em */
 .holdem-table { position: relative; }
 .pot-display {
@@ -564,20 +608,10 @@ input:focus {
   .game-panel { padding: 1rem; }
 }
 
-/* ── Mobile game layout: controls always visible, no scroll to bet/deal ── */
+/* ── Mobile game layout: compact table, controls stay pinned ── */
 @media (max-width: 640px) {
-  body.game-page {
-    height: 100dvh;
-    height: 100svh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
   body.game-page .site-header {
     padding: 0.35rem 0.65rem;
-    flex-shrink: 0;
-    position: relative;
   }
 
   body.game-page .header-left h1 { font-size: 0.82rem; }
@@ -588,23 +622,12 @@ input:focus {
   body.game-page .theme-toggle { width: 32px; height: 32px; }
 
   body.game-page .game-panel {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 0.35rem;
-    padding-bottom: calc(var(--mobile-controls-h, 140px) + 0.35rem);
+    padding: 0.35rem 0.35rem 0.25rem;
     max-width: none;
-    overflow-y: auto;
   }
 
   body.game-page .table-felt {
-    flex: 1;
-    min-height: 0;
-    overflow: visible;
     padding: 0.45rem 0.35rem;
-    margin-bottom: 0;
-    min-height: unset;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
@@ -690,12 +713,7 @@ input:focus {
   body.game-page .playing-card .card-corner.bottom { bottom: 2px; right: 3px; }
 
   body.game-page .controls-panel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 200;
-    margin: 0;
+    margin-top: 0.35rem;
     padding: 0.4rem 0.45rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
@@ -724,7 +742,6 @@ input:focus {
   }
 
   body.game-page .bet-controls label { font-size: 0.9rem; }
-  body.game-page .mode-links { display: none; }
 
   body.game-page .holdem-seats { grid-template-columns: 1fr; }
   body.game-page .community-row { margin: 0.35rem 0; }
