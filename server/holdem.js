@@ -93,9 +93,9 @@ function nextBetter(room, fromIdx) {
   for (let i = 1; i <= n; i++) {
     const idx = (fromIdx + i) % n;
     const p = room.players[idx];
-    if (!p.folded && p.status === 'active' && (p.bet < room.currentBet || p.lastAction === null)) {
-      return p.id;
-    }
+    if (p.folded || p.status !== 'active') continue;
+    if (p.chips === 0) continue;
+    if (p.lastAction === null || p.bet < room.currentBet) return p.id;
   }
   return null;
 }
@@ -103,8 +103,10 @@ function nextBetter(room, fromIdx) {
 function bettingComplete(room) {
   const active = playersInHand(room);
   if (active.length <= 1) return true;
-  if (active.every(p => p.bet === room.currentBet && p.lastAction !== null)) return true;
-  return false;
+  return active.every(p => {
+    if (p.chips === 0) return p.lastAction !== null;
+    return p.bet === room.currentBet && p.lastAction !== null;
+  });
 }
 
 function playerAction(room, playerId, action, raiseAmount = 0) {
@@ -124,7 +126,7 @@ function playerAction(room, playerId, action, raiseAmount = 0) {
     p.bet += pay;
     p.totalBet += pay;
     room.pot += pay;
-    p.lastAction = 'call';
+    p.lastAction = p.chips === 0 ? 'allin' : 'call';
   } else if (action === 'raise') {
     const minRaise = room.currentBet + BIG_BLIND;
     const raiseTo = Math.max(minRaise, raiseAmount);
@@ -136,9 +138,9 @@ function playerAction(room, playerId, action, raiseAmount = 0) {
     p.bet = raiseTo;
     room.currentBet = raiseTo;
     for (const other of room.players) {
-      if (other.id !== p.id && !other.folded) other.lastAction = null;
+      if (other.id !== p.id && !other.folded && other.chips > 0) other.lastAction = null;
     }
-    p.lastAction = 'raise';
+    p.lastAction = p.chips === 0 ? 'allin' : 'raise';
   } else if (action === 'allin') {
     room.pot += p.chips;
     p.bet += p.chips;
@@ -146,7 +148,7 @@ function playerAction(room, playerId, action, raiseAmount = 0) {
     if (p.bet > room.currentBet) {
       room.currentBet = p.bet;
       for (const other of room.players) {
-        if (other.id !== p.id && !other.folded) other.lastAction = null;
+        if (other.id !== p.id && !other.folded && other.chips > 0) other.lastAction = null;
       }
     }
     p.chips = 0;
