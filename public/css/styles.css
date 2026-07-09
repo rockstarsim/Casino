@@ -539,6 +539,94 @@ input:focus {
   min-height: 52px;
 }
 
+/* Game pages: controls pinned at bottom, table scrolls — all screen sizes */
+body.game-page {
+  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body.game-page .site-header {
+  flex-shrink: 0;
+  position: relative;
+}
+
+body.game-page .game-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0.65rem 1rem 0.5rem;
+}
+
+body.game-page .table-felt {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  margin-bottom: 0;
+  padding: 0.75rem 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.game-page .controls-panel {
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+  z-index: 50;
+}
+
+body.game-page .mode-links { display: none; }
+
+/* Compact game-page seats so table + controls fit at 100% zoom */
+body.game-page .dealer-area { margin-bottom: 0.5rem; }
+body.game-page .dealer-persona {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  gap: 0.4rem;
+}
+body.game-page .player-header {
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+body.game-page .avatar-frame {
+  width: clamp(72px, 10vh, 112px);
+  height: clamp(72px, 10vh, 112px);
+  border-width: 2px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+}
+body.game-page .avatar-frame.dealer-frame {
+  width: clamp(80px, 11vh, 120px);
+  height: clamp(80px, 11vh, 120px);
+}
+body.game-page .player-avatar.small {
+  width: clamp(64px, 9vh, 96px);
+  height: clamp(64px, 9vh, 96px);
+}
+body.game-page .player-name { font-size: 0.9rem; }
+body.game-page .player-chips { font-size: 0.72rem; }
+body.game-page .player-bet { font-size: 0.72rem; margin: 0.15rem 0; }
+body.game-page .players-grid,
+body.game-page .holdem-seats {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+body.game-page .player-seat,
+body.game-page .holdem-seat { padding: 0.5rem; }
+body.game-page .game-message {
+  margin: 0.35rem 0;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+}
+body.game-page .card-row { min-height: auto; gap: 0.25rem; }
+body.game-page .pot-display { margin-bottom: 0.5rem; font-size: 0.85rem; }
+body.game-page .community-row { margin: 0.5rem 0; }
+
 /* Hold'em */
 .holdem-table { position: relative; }
 .pot-display {
@@ -564,20 +652,10 @@ input:focus {
   .game-panel { padding: 1rem; }
 }
 
-/* ── Mobile game layout: controls always visible, no scroll to bet/deal ── */
+/* ── Mobile game layout: tighter compact table, controls stay pinned ── */
 @media (max-width: 640px) {
-  body.game-page {
-    height: 100dvh;
-    height: 100svh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
   body.game-page .site-header {
     padding: 0.35rem 0.65rem;
-    flex-shrink: 0;
-    position: relative;
   }
 
   body.game-page .header-left h1 { font-size: 0.82rem; }
@@ -588,92 +666,54 @@ input:focus {
   body.game-page .theme-toggle { width: 32px; height: 32px; }
 
   body.game-page .game-panel {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 0.35rem;
-    padding-bottom: calc(var(--mobile-controls-h, 140px) + 0.35rem);
+    padding: 0.35rem 0.35rem 0.25rem;
     max-width: none;
-    overflow-y: auto;
   }
 
   body.game-page .table-felt {
-    flex: 1;
-    min-height: 0;
-    overflow: visible;
     padding: 0.45rem 0.35rem;
-    margin-bottom: 0;
-    min-height: unset;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
   }
 
-  body.game-page .dealer-area {
-    margin-bottom: 0.15rem;
-    flex-shrink: 0;
-  }
+  body.game-page .dealer-area { margin-bottom: 0.15rem; }
 
   body.game-page .dealer-persona {
     padding: 0.3rem 0.45rem;
     margin-bottom: 0.25rem;
-    gap: 0.45rem;
+    gap: 0.35rem;
   }
 
-  body.game-page .avatar-frame.dealer-frame { width: 160px; height: 160px; }
-  body.game-page .dealer-title { font-size: 0.85rem; }
-  body.game-page .score-badge { font-size: 0.65rem; padding: 0.1rem 0.45rem; }
-
-  body.game-page .card-row {
-    min-height: auto;
-    gap: 0.18rem;
-  }
-
-  body.game-page .game-message {
-    margin: 0.15rem 0;
-    padding: 0.3rem 0.5rem;
-    font-size: 0.7rem;
-    flex-shrink: 0;
-  }
-
-  body.game-page .players-grid {
-    flex: 1;
-    min-height: 0;
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-    align-content: start;
-  }
-
-  body.game-page .player-seat,
-  body.game-page .holdem-seat {
-    padding: 0.3rem;
-  }
-
-  body.game-page .player-header {
-    gap: 0.3rem;
-    margin-bottom: 0.2rem;
-  }
-
-  body.game-page .avatar-frame {
-    width: 152px;
-    height: 152px;
-    border-width: 2px;
-  }
-
+  body.game-page .avatar-frame,
+  body.game-page .avatar-frame.dealer-frame,
   body.game-page .avatar-frame.you-frame {
-    width: 152px;
-    height: 152px;
+    width: clamp(64px, 14vw, 88px);
+    height: clamp(64px, 14vw, 88px);
   }
 
   body.game-page .player-avatar.small {
-    width: 152px;
-    height: 152px;
+    width: clamp(56px, 12vw, 80px);
+    height: clamp(56px, 12vw, 80px);
+  }
+
+  body.game-page .dealer-title { font-size: 0.85rem; }
+  body.game-page .score-badge { font-size: 0.65rem; padding: 0.1rem 0.45rem; }
+
+  body.game-page .players-grid,
+  body.game-page .holdem-seats {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  body.game-page .player-seat,
+  body.game-page .holdem-seat { padding: 0.3rem; }
+
+  body.game-page .player-header {
+    gap: 0.25rem;
+    margin-bottom: 0.15rem;
   }
 
   body.game-page .player-name { font-size: 0.85rem; }
   body.game-page .player-chips { font-size: 0.6rem; }
-  body.game-page .player-bet { font-size: 0.6rem; margin: 0.1rem 0; }
+  body.game-page .player-bet { font-size: 0.6rem; }
   body.game-page .hand-total { font-size: 0.62rem; margin-top: 0.15rem; }
   body.game-page .hand-total strong { font-size: 0.72rem; }
   body.game-page .role-badge { font-size: 0.48rem; padding: 0.08rem 0.28rem; }
@@ -690,12 +730,7 @@ input:focus {
   body.game-page .playing-card .card-corner.bottom { bottom: 2px; right: 3px; }
 
   body.game-page .controls-panel {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 200;
-    margin: 0;
+    margin-top: 0.35rem;
     padding: 0.4rem 0.45rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
@@ -724,9 +759,6 @@ input:focus {
   }
 
   body.game-page .bet-controls label { font-size: 0.9rem; }
-  body.game-page .mode-links { display: none; }
-
-  body.game-page .holdem-seats { grid-template-columns: 1fr; }
   body.game-page .community-row { margin: 0.35rem 0; }
   body.game-page .pot-display { font-size: 0.75rem; margin-bottom: 0.35rem; padding: 0.25rem 0.65rem; }
 }

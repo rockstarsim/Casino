@@ -21,10 +21,15 @@ const balanceEl = document.getElementById('balance');
 
 function init() {
   const aiNames = pickAiNames(4);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length);
   players = [
     { id: humanId, name: 'You', chips: getBalance(), bets: { player: 0, banker: 0, tie: 0 }, isAi: false, result: null },
-    ...aiNames.map(n => ({ id: uid(), name: n, chips: 10000, bets: { player: 0, banker: 0, tie: 0 }, isAi: true, result: null }))
+    ...aiNames.map((n, i) => ({
+      id: uid(), name: n, chips: 10000, bets: { player: 0, banker: 0, tie: 0 },
+      isAi: true, result: null, characterIndex: charIndices[i]
+    }))
   ];
+  assignUniqueCharacters(players);
   updateChipDisplay(balanceEl, getBalance());
   render();
 }

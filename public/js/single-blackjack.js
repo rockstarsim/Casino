@@ -20,10 +20,15 @@ const balanceEl = document.getElementById('balance');
 
 function init() {
   const aiNames = pickAiNames(3);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length);
   players = [
     { id: humanId, name: 'You', chips: getBalance(), bet: 0, hand: [], status: 'waiting', isAi: false, isYou: true, result: null },
-    ...aiNames.map(n => ({ id: uid(), name: n, chips: 10000, bet: 0, hand: [], status: 'waiting', isAi: true, result: null }))
+    ...aiNames.map((n, i) => ({
+      id: uid(), name: n, chips: 10000, bet: 0, hand: [], status: 'waiting',
+      isAi: true, result: null, characterIndex: charIndices[i]
+    }))
   ];
+  assignUniqueCharacters(players);
   updateChipDisplay(balanceEl, getBalance());
   render();
 }
@@ -53,6 +58,7 @@ function render() {
     }
     seat.className = 'player-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.isAi ? ' ai-player' : '');
     seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    syncPlayerAvatar(seat.querySelector('.seat-header'), p);
     seat.querySelector('.seat-bet').innerHTML = p.bet ? `<div class="player-bet">Bet: ${formatMoney(p.bet)}</div>` : '';
     const total = p.hand.length ? blackjackTotal(p.hand) : 0;
     seat.querySelector('.seat-total').innerHTML = p.hand.length ? `<div class="hand-total">Total: <strong>${total}</strong></div>` : '';

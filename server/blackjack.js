@@ -1,4 +1,5 @@
 const { newShoe, draw, blackjackTotal } = require('./deck');
+const { assignCharacterIndex } = require('./avatars');
 
 function createBlackjackRoom(code) {
   return {
@@ -16,10 +17,10 @@ function createBlackjackRoom(code) {
 function addPlayer(room, id, name) {
   if (room.players.find(p => p.id === id)) return room.players.find(p => p.id === id);
   if (room.players.length >= 7) return null;
-  const player = {
+  const player = assignCharacterIndex(room, {
     id, name, chips: 10000, bet: 0, hand: [],
     status: 'waiting', acted: false, doubled: false, seat: room.players.length
-  };
+  });
   room.players.push(player);
   return player;
 }
@@ -159,6 +160,7 @@ function publicState(room, viewerId) {
       id: p.id, name: p.name, chips: p.chips, bet: p.bet,
       hand: p.hand, status: p.status, result: p.result, seat: p.seat,
       total: p.hand.length ? blackjackTotal(p.hand) : 0,
+      characterIndex: p.characterIndex,
       isYou: p.id === viewerId
     })),
     currentTurn: room.currentTurn,
