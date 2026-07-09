@@ -72,4 +72,10 @@ function holdemStrength(hole, community) {
   return Math.min(0.95, (hand.score + 1) / 9 + hand.tiebreak[0] / 140);
 }
 
+const ACTION_DELAY_MS = 1000;
+
+function actionDelay() {
+  return ACTION_DELAY_MS;
+}
+
 function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
