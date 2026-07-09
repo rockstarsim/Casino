@@ -3,36 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Texas Hold'em — Casino Royale</title>
+  <title>Texas Hold'em (Single Player) — Casino Royale</title>
   <link rel="stylesheet" href="css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="game-page">
   <header class="site-header">
     <a href="/" class="back-link">← Lobby</a>
-    <h1>Texas Hold'em</h1>
-    <div class="room-code" id="room-code"></div>
+    <h1>Texas Hold'em <span class="mode-badge">Single Player</span></h1>
+    <div class="chip-display"><span class="chip-label">Balance</span><span class="chip-amount" id="balance">$10,000</span></div>
   </header>
-
-  <div id="lobby-panel" class="lobby-panel">
-    <h2>Join a Table</h2>
-    <input type="text" id="player-name" placeholder="Your name" maxlength="16">
-    <div class="lobby-actions">
-      <button id="create-room-btn" class="btn btn-gold">Create Room</button>
-      <div class="join-row">
-        <input type="text" id="join-code" placeholder="Room code" maxlength="6">
-        <button id="join-room-btn" class="btn btn-outline">Join</button>
-      </div>
-    </div>
-    <p id="lobby-error" class="error-text"></p>
-    <p class="mode-links"><a href="single-holdem.html">← Play Single Player vs AI</a></p>
-  </div>
-
-  <div id="game-panel" class="game-panel hidden">
+  <div class="game-panel">
     <div class="table-felt holdem-table">
       <div class="pot-display">Pot: <span id="pot">$0</span> · <span id="round-info">Waiting</span></div>
       <div id="community-cards" class="card-row community-row"></div>
-      <p id="message" class="game-message">Waiting for players...</p>
+      <p id="message" class="game-message">Start a hand to play against AI opponents.</p>
       <div id="players-area" class="holdem-seats"></div>
     </div>
     <div class="controls-panel">
@@ -46,10 +31,12 @@
         <button id="allin-btn" class="btn" disabled>All In</button>
       </div>
     </div>
+    <p class="mode-links"><a href="holdem.html">Play Multiplayer →</a></p>
   </div>
-
   <script src="js/shared.js"></script>
-  <script src="js/multiplayer.js"></script>
-  <script src="js/holdem-client.js"></script>
+  <script src="js/deck.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/single-shared.js"></script>
+  <script src="js/single-holdem.js"></script>
 </body>
 </html>

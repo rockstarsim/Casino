@@ -205,6 +205,23 @@ h1, h2, h3 { font-family: 'Cinzel', serif; }
 .holdem-seat.folded { opacity: 0.45; }
 .hole-cards { display: flex; justify-content: center; gap: 0.25rem; margin: 0.5rem 0; }
 
+.section-title { color: var(--gold); margin: 0 0 1rem; font-size: 1.1rem; }
+.section-title .muted { color: #666; font-weight: 400; font-family: 'Inter', sans-serif; font-size: 0.85rem; }
+.mode-badge {
+  font-size: 0.55rem; vertical-align: middle; background: rgba(212,175,55,0.2);
+  border: 1px solid var(--gold); padding: 0.15rem 0.5rem; border-radius: 4px;
+  font-family: 'Inter', sans-serif; letter-spacing: 1px;
+}
+.chip-display { text-align: right; }
+.chip-label { display: block; font-size: 0.7rem; color: #888; }
+.chip-amount { color: var(--gold-light); font-weight: 700; font-size: 1.1rem; }
+.mode-links { text-align: center; margin-top: 1rem; }
+.mode-links a { color: var(--gold); font-size: 0.9rem; }
+.game-card.single-card { border-color: rgba(46,204,113,0.4); }
+.game-card.single-card:hover { border-color: #2ecc71; }
+.ai-player { opacity: 0.95; }
+.player-row.ai-player, .holdem-seat.ai-player { border-left: 3px solid #5dade2; }
+
 @media (max-width: 600px) {
   .bac-hands { grid-template-columns: 1fr; }
   .playing-card { width: 50px; height: 70px; font-size: 0.9rem; }
