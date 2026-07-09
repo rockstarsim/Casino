@@ -33,6 +33,7 @@ function human() { return players.find(p => p.id === humanId); }
 function render() {
   const hideDealer = phase === 'playing';
   renderCards(dealerCards, hideDealer && dealer.hand.length ? [dealer.hand[0], { hidden: true }] : dealer.hand);
+  playersArea.innerHTML = '';
   players.forEach(p => {
     assignAvatarSeed(p);
     if (p.id === humanId) p.isYou = true;
