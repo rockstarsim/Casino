@@ -18,7 +18,18 @@ function createCardElement(card) {
     el.innerHTML = '<img class="card-img" src="img/cards/back.svg" alt="Hidden card" draggable="false">';
   } else if (card) {
     const src = cardImageSrc(card);
-    el.innerHTML = `<img class="card-img" src="${src}" alt="${card.rank}${card.suit}" draggable="false">`;
+    const suitClass = card.red ? 'red' : 'black';
+    el.classList.add(suitClass);
+    el.innerHTML = `
+      <img class="card-img" src="${src}" alt="${card.rank}${card.suit}" draggable="false">
+      <div class="card-index top-left" aria-hidden="true">
+        <span class="card-rank">${card.rank}</span>
+        <span class="card-suit">${card.suit}</span>
+      </div>
+      <div class="card-index bottom-right" aria-hidden="true">
+        <span class="card-rank">${card.rank}</span>
+        <span class="card-suit">${card.suit}</span>
+      </div>`;
   }
   return el;
 }
