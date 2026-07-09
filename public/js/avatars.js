@@ -24,17 +24,29 @@ function pickCharacterNames(count) {
   return shuffleArray(CHARACTER_NAMES).slice(0, count);
 }
 
+function pickUniqueCharacterIndices(count, reserved = []) {
+  const blocked = new Set(reserved);
+  const pool = shuffleArray(
+    [...Array(CHARACTER_COUNT).keys()].filter(i => !blocked.has(i))
+  );
+  return pool.slice(0, count);
+}
+
 function isYouPlayer(player) {
   return player.isYou || player.id === 'human' || player.name === 'You';
 }
 
 function assignUniqueCharacters(players) {
-  const pool = shuffleArray([...Array(CHARACTER_COUNT).keys()]);
+  const used = new Set();
+  for (const p of players) {
+    if (Number.isInteger(p.characterIndex)) used.add(p.characterIndex);
+  }
+  const available = pickUniqueCharacterIndices(players.length, [...used]);
   let next = 0;
   for (const p of players) {
     if (p.isDealer || isYouPlayer(p)) continue;
     if (Number.isInteger(p.characterIndex)) continue;
-    p.characterIndex = pool[next++];
+    p.characterIndex = available[next++];
   }
   return players;
 }
@@ -45,9 +57,20 @@ function characterImageFor(player) {
   if (Number.isInteger(player.characterIndex)) {
     return `img/characters/char-${player.characterIndex}.png`;
   }
-  const seed = player.avatarSeed || player.id || player.name;
+  const seed = player.avatarSeed || `${player.name}-${player.id}` || player.name;
   const idx = hashStr(seed) % CHARACTER_COUNT;
   return `img/characters/char-${idx}.png`;
+}
+
+function syncPlayerAvatar(scope, player) {
+  if (!scope || !player) return;
+  const img = scope.querySelector('.player-avatar');
+  if (!img) return;
+  const src = characterImageFor(player);
+  if (img.getAttribute('src') !== src) img.setAttribute('src', src);
+  if (Number.isInteger(player.characterIndex)) {
+    img.dataset.char = String(player.characterIndex);
+  }
 }
 
 function assignAvatarSeed(player) {
@@ -71,7 +94,7 @@ function buildPlayerHeader(p) {
   return `
     <div class="player-header">
       <div class="avatar-frame${p.isAi ? ' ai-frame' : ''}${isYou ? ' you-frame' : ''}">
-        <img class="player-avatar" src="${characterImageFor(p)}" alt="${p.name}" loading="lazy">
+        <img class="player-avatar" src="${characterImageFor(p)}" alt="${p.name}" data-char="${Number.isInteger(p.characterIndex) ? p.characterIndex : ''}">
       </div>
       <div class="player-meta">
         <div class="player-name-row">
@@ -106,7 +129,7 @@ function buildPlayerRow(p) {
   return `
     <div class="player-row${isYou ? ' is-you' : ''}${p.isAi ? ' ai-player' : ''}">
       <div class="player-row-left">
-        <img class="player-avatar small" src="${characterImageFor(p)}" alt="${p.name}">
+        <img class="player-avatar small" src="${characterImageFor(p)}" alt="${p.name}" data-char="${Number.isInteger(p.characterIndex) ? p.characterIndex : ''}">
         <div>
           <strong>${p.name}</strong> ${playerBadge(p)}
           <div class="player-chips">${formatMoney(p.chips)}</div>

@@ -46,6 +46,7 @@ function render(state) {
     }
     seat.className = 'holdem-seat' + (p.isYou ? ' is-you' : '') + (state.currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '');
     seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    syncPlayerAvatar(seat.querySelector('.seat-header'), p);
     seat.querySelector('.seat-bet').innerHTML = `${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}${p.lastAction ? ` <span class="action-tag">${p.lastAction}</span>` : ''}`;
     const handEl = seat.querySelector('.seat-hand');
     handEl.textContent = p.handName || '';

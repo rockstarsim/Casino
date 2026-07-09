@@ -28,9 +28,13 @@ const balanceEl = document.getElementById('balance');
 
 function init() {
   const aiNames = pickAiNames(4);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length);
   players = [
     { id: humanId, name: 'You', chips: getBalance(), hole: [], bet: 0, totalBet: 0, folded: false, status: 'waiting', isAi: false, lastAction: null },
-    ...aiNames.map(n => ({ id: uid(), name: n, chips: 10000, hole: [], bet: 0, totalBet: 0, folded: false, status: 'waiting', isAi: true, lastAction: null }))
+    ...aiNames.map((n, i) => ({
+      id: uid(), name: n, chips: 10000, hole: [], bet: 0, totalBet: 0, folded: false,
+      status: 'waiting', isAi: true, lastAction: null, characterIndex: charIndices[i]
+    }))
   ];
   assignUniqueCharacters(players);
   updateChipDisplay(balanceEl, getBalance());
@@ -95,6 +99,7 @@ function render() {
     }
     seat.className = 'holdem-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '') + (p.isAi ? ' ai-player' : '');
     seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    syncPlayerAvatar(seat.querySelector('.seat-header'), p);
     seat.querySelector('.seat-bet').innerHTML = `${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}${p.lastAction ? ` <span class="action-tag">${p.lastAction}</span>` : ''}`;
     const handName = showHoles && p.hole.length && community.length >= 3 ? bestHoldemHand(p.hole, community)?.name : '';
     const handEl = seat.querySelector('.seat-hand');
