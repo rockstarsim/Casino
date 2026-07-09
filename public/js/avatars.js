@@ -32,9 +32,18 @@ function assignAvatarSeed(player) {
 
 function playerBadge(p) {
   if (p.isDealer) return '<span class="role-badge dealer-badge">Dealer</span>';
-  if (p.isYou || p.id === 'human' || p.name === 'You') return '<span class="role-badge you-badge">You</span>';
+  if (p.isYou || p.id === 'human' || p.name === 'You') return '<span class="role-badge you-badge">★ You</span>';
   if (p.isAi) return '<span class="role-badge ai-badge">Opponent</span>';
   return '<span class="role-badge guest-badge">Player</span>';
+}
+
+function avatarFrameClass(p) {
+  const isYou = p.isYou || p.id === 'human' || p.name === 'You';
+  let cls = 'avatar-frame';
+  if (p.isDealer) cls += ' dealer-frame';
+  if (isYou) cls += ' you-frame';
+  else if (p.isAi) cls += ' ai-frame';
+  return cls;
 }
 
 function buildPlayerHeader(p) {
@@ -43,7 +52,7 @@ function buildPlayerHeader(p) {
   if (isYou) p.isYou = true;
   return `
     <div class="player-header">
-      <div class="avatar-frame${p.isAi ? ' ai-frame' : ''}${isYou ? ' you-frame' : ''}">
+      <div class="${avatarFrameClass(p)}">
         <img class="player-avatar" src="${characterImageFor(p)}" alt="${p.name}" loading="lazy">
       </div>
       <div class="player-meta">
@@ -79,7 +88,9 @@ function buildPlayerRow(p) {
   return `
     <div class="player-row${isYou ? ' is-you' : ''}${p.isAi ? ' ai-player' : ''}">
       <div class="player-row-left">
-        <img class="player-avatar small" src="${characterImageFor(p)}" alt="${p.name}">
+        <div class="${avatarFrameClass(p)} row-avatar">
+          <img class="player-avatar" src="${characterImageFor(p)}" alt="${p.name}" loading="lazy">
+        </div>
         <div>
           <strong>${p.name}</strong> ${playerBadge(p)}
           <div class="player-chips">${formatMoney(p.chips)}</div>

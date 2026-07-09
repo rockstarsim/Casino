@@ -114,7 +114,7 @@ function render() {
     messageEl.textContent = 'Ready for next hand.';
     startBtn.disabled = false;
   } else if (phase === 'betting') {
-    messageEl.textContent = canAct ? `Your turn. Call: ${formatMoney(toCall)}` : `${players.find(p => p.id === currentTurn)?.name} is thinking...`;
+    messageEl.textContent = canAct ? `Your turn! Match ${formatMoney(toCall)} or pick another button.` : `${players.find(p => p.id === currentTurn)?.name} is choosing...`;
     startBtn.disabled = true;
   } else if (phase === 'showdown' || phase === 'results') {
     messageEl.textContent = winners.map(w => `${w.name} wins ${formatMoney(w.amount)}`).join(' · ') || 'Hand over.';
