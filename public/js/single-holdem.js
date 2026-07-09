@@ -38,6 +38,12 @@ function init() {
 
 function human() { return players.find(p => p.id === humanId); }
 function inHand() { return players.filter(p => p.status !== 'waiting' && !p.folded); }
+function allInActive() { return players.some(p => p.lastAction === 'allin' && !p.folded); }
+
+function aiThinkDelay() {
+  if (allInActive()) return 60 + Math.random() * 90;
+  return 250 + Math.random() * 300;
+}
 
 function render() {
   const showHoles = phase === 'showdown' || phase === 'results';
@@ -45,23 +51,36 @@ function render() {
   potEl.textContent = formatMoney(pot);
   roundInfo.textContent = round ? round.toUpperCase() : phase;
 
-  playersArea.innerHTML = '';
+  const existingMap = new Map();
+  playersArea.querySelectorAll('[data-player-id]').forEach(el => existingMap.set(el.dataset.playerId, el));
+
   players.forEach(p => {
     assignAvatarSeed(p);
     if (p.id === humanId) p.isYou = true;
-    const seat = document.createElement('div');
-    seat.className = 'holdem-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '');
-    if (p.isAi) seat.classList.add('ai-player');
-    const holes = (p.id === humanId || showHoles) ? p.hole : p.hole.map(() => ({ hidden: true }));
+    let seat = existingMap.get(p.id);
+    if (!seat) {
+      seat = document.createElement('div');
+      seat.dataset.playerId = p.id;
+      seat.innerHTML = `
+        <div class="seat-header"></div>
+        <div class="player-bet seat-bet"></div>
+        <div class="hole-cards"></div>
+        <div class="hand-name seat-hand"></div>`;
+      playersArea.appendChild(seat);
+    }
+    seat.className = 'holdem-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '') + (p.isAi ? ' ai-player' : '');
+    seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    seat.querySelector('.seat-bet').innerHTML = `${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}${p.lastAction ? ` <span class="action-tag">${p.lastAction}</span>` : ''}`;
     const handName = showHoles && p.hole.length && community.length >= 3 ? bestHoldemHand(p.hole, community)?.name : '';
-    seat.innerHTML = `
-      ${buildPlayerHeader(p)}
-      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction ? `<span class="action-tag">${p.lastAction}</span>` : ''}</div>
-      <div class="hole-cards"></div>
-      ${handName ? `<div class="hand-name">${handName}</div>` : ''}`;
-    playersArea.appendChild(seat);
+    const handEl = seat.querySelector('.seat-hand');
+    handEl.textContent = handName || '';
+    handEl.style.display = handName ? '' : 'none';
+    const holes = (p.id === humanId || showHoles) ? p.hole : p.hole.map(() => ({ hidden: true }));
     renderCards(seat.querySelector('.hole-cards'), holes);
+    existingMap.delete(p.id);
   });
+
+  existingMap.forEach(el => el.remove());
 
   const me = human();
   const canAct = currentTurn === humanId && phase === 'betting';
@@ -199,8 +218,10 @@ async function processTurn() {
     const p = players.find(x => x.id === currentTurn);
     render();
     if (p.isAi) {
-      await delay(700 + Math.random() * 900);
-      let action = aiHoldemAction(p, { currentBet, pot, community });
+      await delay(aiThinkDelay());
+      const ctx = { currentBet, pot, community, allInActive: allInActive() };
+      let action = aiHoldemAction(p, ctx);
+      if (action === 'raise' && allInActive()) action = p.bet < currentBet ? 'call' : 'check';
       if (action === 'raise') {
         const raiseTo = currentBet + BIG_BLIND + Math.floor(Math.random() * 100);
         if (!doAction(p, 'raise', raiseTo)) doAction(p, 'call');

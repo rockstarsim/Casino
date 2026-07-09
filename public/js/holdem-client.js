@@ -29,18 +29,31 @@ function render(state) {
   potEl.textContent = formatMoney(state.pot);
   roundInfo.textContent = state.round ? state.round.toUpperCase() : state.phase;
 
-  playersArea.innerHTML = '';
+  const existingMap = new Map();
+  playersArea.querySelectorAll('[data-player-id]').forEach(el => existingMap.set(el.dataset.playerId, el));
+
   for (const p of state.players) {
-    const seat = document.createElement('div');
+    let seat = existingMap.get(p.id);
+    if (!seat) {
+      seat = document.createElement('div');
+      seat.dataset.playerId = p.id;
+      seat.innerHTML = `
+        <div class="seat-header"></div>
+        <div class="player-bet seat-bet"></div>
+        <div class="hole-cards"></div>
+        <div class="hand-name seat-hand"></div>`;
+      playersArea.appendChild(seat);
+    }
     seat.className = 'holdem-seat' + (p.isYou ? ' is-you' : '') + (state.currentTurn === p.id ? ' active-turn' : '') + (p.folded ? ' folded' : '');
-    seat.innerHTML = `
-      ${buildPlayerHeader(p)}
-      <div class="player-bet">${p.bet ? 'Bet: '+formatMoney(p.bet) : ''} ${p.lastAction ? `<span class="action-tag">${p.lastAction}</span>` : ''}</div>
-      <div class="hole-cards"></div>
-      ${p.handName ? `<div class="hand-name">${p.handName}</div>` : ''}`;
-    playersArea.appendChild(seat);
+    seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    seat.querySelector('.seat-bet').innerHTML = `${p.bet ? 'Bet: ' + formatMoney(p.bet) : ''}${p.lastAction ? ` <span class="action-tag">${p.lastAction}</span>` : ''}`;
+    const handEl = seat.querySelector('.seat-hand');
+    handEl.textContent = p.handName || '';
+    handEl.style.display = p.handName ? '' : 'none';
     renderCards(seat.querySelector('.hole-cards'), p.hole);
+    existingMap.delete(p.id);
   }
+  existingMap.forEach(el => el.remove());
 
   const me = state.players.find(p => p.isYou);
   const canAct = state.yourTurn && state.phase === 'betting';

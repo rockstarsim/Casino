@@ -28,7 +28,13 @@ function aiBaccaratBet(chips) {
 function aiHoldemAction(player, room) {
   const toCall = room.currentBet - player.bet;
   const strength = holdemStrength(player.hole, room.community);
-  const potOdds = toCall / (room.pot + toCall + 1);
+  const allInActive = room.allInActive;
+
+  if (allInActive || toCall >= player.chips) {
+    if (strength >= 0.3 || toCall === 0) return toCall > 0 ? 'call' : 'check';
+    if (strength >= 0.18 && toCall <= player.chips * 0.5) return 'call';
+    return Math.random() < 0.12 + strength * 0.5 ? 'call' : 'fold';
+  }
 
   if (strength < 0.2 && toCall > 0) return Math.random() < 0.85 ? 'fold' : 'call';
   if (strength < 0.35) {

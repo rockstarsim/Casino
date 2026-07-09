@@ -33,22 +33,34 @@ function human() { return players.find(p => p.id === humanId); }
 function render() {
   const hideDealer = phase === 'playing';
   renderCards(dealerCards, hideDealer && dealer.hand.length ? [dealer.hand[0], { hidden: true }] : dealer.hand);
-  playersArea.innerHTML = '';
+  const existingMap = new Map();
+  playersArea.querySelectorAll('[data-player-id]').forEach(el => existingMap.set(el.dataset.playerId, el));
+
   players.forEach(p => {
     assignAvatarSeed(p);
     if (p.id === humanId) p.isYou = true;
-    const seat = document.createElement('div');
-    seat.className = 'player-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '');
-    if (p.isAi) seat.classList.add('ai-player');
+    let seat = existingMap.get(p.id);
+    if (!seat) {
+      seat = document.createElement('div');
+      seat.dataset.playerId = p.id;
+      seat.innerHTML = `
+        <div class="seat-header"></div>
+        <div class="seat-bet"></div>
+        <div class="card-row seat-cards"></div>
+        <div class="seat-total"></div>
+        <div class="seat-result"></div>`;
+      playersArea.appendChild(seat);
+    }
+    seat.className = 'player-seat' + (p.id === humanId ? ' is-you' : '') + (currentTurn === p.id ? ' active-turn' : '') + (p.isAi ? ' ai-player' : '');
+    seat.querySelector('.seat-header').innerHTML = buildPlayerHeader(p);
+    seat.querySelector('.seat-bet').innerHTML = p.bet ? `<div class="player-bet">Bet: ${formatMoney(p.bet)}</div>` : '';
     const total = p.hand.length ? blackjackTotal(p.hand) : 0;
-  seat.innerHTML = buildSeatCard(p, {
-      bet: p.bet ? `<div class="player-bet">Bet: ${formatMoney(p.bet)}</div>` : '',
-      total: p.hand.length ? `<div class="hand-total">Total: <strong>${total}</strong></div>` : '',
-      result: p.result ? `<span class="result-tag result-${p.result}">${p.result}</span>` : ''
-    });
-    playersArea.appendChild(seat);
+    seat.querySelector('.seat-total').innerHTML = p.hand.length ? `<div class="hand-total">Total: <strong>${total}</strong></div>` : '';
+    seat.querySelector('.seat-result').innerHTML = p.result ? `<span class="result-tag result-${p.result}">${p.result}</span>` : '';
     renderCards(seat.querySelector('.seat-cards'), p.hand);
+    existingMap.delete(p.id);
   });
+  existingMap.forEach(el => el.remove());
 
   const dealerHeader = document.getElementById('dealer-header');
   if (dealerHeader) {
