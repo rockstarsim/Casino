@@ -70,8 +70,7 @@ function bettingComplete() {
 }
 
 function aiThinkDelay() {
-  if (allInActive()) return 60 + Math.random() * 90;
-  return 250 + Math.random() * 300;
+  return actionDelay();
 }
 
 function render() {
@@ -186,7 +185,7 @@ function doAction(p, action, raiseAmount) {
   return true;
 }
 
-function advanceRound() {
+async function advanceRound() {
   players.forEach(p => { p.bet = 0; p.lastAction = null; });
   currentBet = 0;
   const remaining = inHand();
@@ -205,8 +204,9 @@ function advanceRound() {
   else if (round === 'flop') { community.push(draw(shoe)); round = 'turn'; }
   else if (round === 'turn') { community.push(draw(shoe)); round = 'river'; }
   else if (round === 'river') { return showdown(); }
+  await delay(actionDelay());
   currentTurn = nextBetter(dealerIndex);
-  if (!currentTurn) advanceRound();
+  if (!currentTurn) await advanceRound();
   else { render(); processTurn(); }
 }
 
@@ -231,10 +231,10 @@ async function processTurn() {
   while (currentTurn && phase === 'betting') {
     const p = players.find(x => x.id === currentTurn);
     if (!p || !needsToAct(p)) {
-      if (bettingComplete()) { advanceRound(); break; }
+      if (bettingComplete()) { await advanceRound(); break; }
       const idx = players.findIndex(x => x.id === currentTurn);
       currentTurn = nextBetter(idx);
-      if (!currentTurn) { advanceRound(); break; }
+      if (!currentTurn) { await advanceRound(); break; }
       continue;
     }
     render();
@@ -250,20 +250,20 @@ async function processTurn() {
       else doAction(p, action);
     } else return;
     const idx = players.findIndex(x => x.id === currentTurn);
-    if (bettingComplete()) { advanceRound(); break; }
+    if (bettingComplete()) { await advanceRound(); break; }
     currentTurn = nextBetter(idx);
-    if (!currentTurn) { advanceRound(); break; }
+    if (!currentTurn) { await advanceRound(); break; }
   }
 }
 
-function humanAction(action) {
+async function humanAction(action) {
   const p = human();
   if (!p || currentTurn !== humanId) return;
   if (action === 'raise') {
     if (!doAction(p, 'raise', parseInt(raiseInput.value, 10))) return;
   } else doAction(p, action);
   const idx = players.findIndex(x => x.id === humanId);
-  if (bettingComplete()) advanceRound();
+  if (bettingComplete()) await advanceRound();
   else { currentTurn = nextBetter(idx); processTurn(); }
 }
 

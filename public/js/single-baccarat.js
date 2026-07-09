@@ -69,7 +69,7 @@ function placeBet(p, type, amount) {
 
 async function aiPlaceBets() {
   for (const p of players.filter(x => x.isAi)) {
-    await delay(300 + Math.random() * 500);
+    await delay(actionDelay());
     const { type, amount } = aiBaccaratBet(p.chips);
     if (amount >= 10) placeBet(p, type, amount);
     render();
@@ -103,7 +103,7 @@ function resolveBets() {
 async function deal() {
   phase = 'dealing';
   messageEl.textContent = 'Dealing...';
-  await delay(500);
+  await delay(actionDelay());
 
   const dealt = dealBaccaratHands(shoe);
   playerHand = dealt.playerHand;
@@ -111,7 +111,7 @@ async function deal() {
   playerTotal = dealt.pTotal;
   bankerTotal = dealt.bTotal;
   render();
-  await delay(800);
+  await delay(actionDelay());
 
   resolveBets();
   phase = 'results';

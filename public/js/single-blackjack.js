@@ -102,7 +102,7 @@ function allBetsPlaced() { return players.every(p => p.bet > 0); }
 
 async function aiPlaceBets() {
   for (const p of players.filter(x => x.isAi)) {
-    await delay(400 + Math.random() * 400);
+    await delay(actionDelay());
     const bet = aiBetAmount(p.chips);
     p.bet = bet;
     p.chips -= bet;
@@ -141,7 +141,7 @@ async function processTurn() {
     const p = players.find(x => x.id === currentTurn);
     render();
     if (p.isAi) {
-      await delay(600 + Math.random() * 800);
+      await delay(actionDelay());
       const action = aiBlackjackAction(p, shoe);
       if (action === 'hit') doHit(p);
       else if (action === 'double' && p.hand.length === 2 && p.bet <= p.chips) doDouble(p);
@@ -175,8 +175,17 @@ function doDouble(p) {
 }
 
 function finishDealer() {
+  finishDealerAsync();
+}
+
+async function finishDealerAsync() {
   phase = 'results';
-  while (blackjackTotal(dealer.hand) < 17) dealer.hand.push(draw(shoe));
+  render();
+  while (blackjackTotal(dealer.hand) < 17) {
+    await delay(actionDelay());
+    dealer.hand.push(draw(shoe));
+    render();
+  }
   const dt = blackjackTotal(dealer.hand);
   const dealerBust = dt > 21;
   const dealerBJ = dealer.hand.length === 2 && dt === 21;
