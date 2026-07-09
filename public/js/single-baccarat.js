@@ -44,7 +44,7 @@ function render() {
 
   const hasBets = players.some(p => p.bets.player + p.bets.banker + p.bets.tie > 0);
   if (phase === 'betting') {
-    messageEl.textContent = 'Pick who you think will win, then tap Show Cards!';
+    messageEl.textContent = 'Place your bets, then deal.';
     dealBtn.disabled = !hasBets;
     newRoundBtn.disabled = true;
   } else if (phase === 'results') {
