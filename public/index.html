@@ -4,67 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Casino Royale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/ui-improvements.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="js/theme.js"></script>
 </head>
 <body class="lobby">
-  <div class="ambient-glow"></div>
   <header class="site-header">
-    <div class="logo"><span class="logo-icon">♠</span><h1>Casino Royale</h1></div>
-    <div class="server-status" id="server-status">Connecting...</div>
+    <div class="header-left">
+      <div class="logo"><span class="logo-icon">♠</span><h1>Casino Royale</h1></div>
+    </div>
+    <div class="header-right">
+      <span class="server-status" id="server-status">Connecting...</span>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
   </header>
   <main class="lobby-main">
     <section class="hero">
-      <p class="hero-tag">Casino Royale</p>
-      <h2>Choose Your Game</h2>
-      <p class="hero-sub">Play solo against AI or multiplayer with friends online.</p>
+      <p class="hero-tag">Welcome</p>
+      <h2>Choose your game</h2>
+      <p class="hero-sub">Play solo against AI or online with friends. Pick a table below to get started.</p>
     </section>
-    <h3 class="section-title">Single Player <span class="muted">— vs AI</span></h3>
+    <h3 class="section-title">Single player</h3>
     <section class="game-grid">
       <a href="single-blackjack.html" class="game-card single-card">
         <div class="game-card-icon">🃏</div>
         <h3>Blackjack</h3>
-        <p>You + 3 AI players vs the dealer. No internet needed.</p>
-        <span class="game-card-cta">Play Solo →</span>
+        <p>You and 3 AI players vs the dealer. Works offline.</p>
+        <span class="game-card-cta">Play solo →</span>
       </a>
       <a href="single-baccarat.html" class="game-card single-card">
         <div class="game-card-icon">🎴</div>
         <h3>Baccarat</h3>
-        <p>Bet alongside 4 AI players. Dealer runs the shoe.</p>
-        <span class="game-card-cta">Play Solo →</span>
+        <p>Bet with 4 AI players. The dealer runs the shoe.</p>
+        <span class="game-card-cta">Play solo →</span>
       </a>
       <a href="single-holdem.html" class="game-card single-card">
         <div class="game-card-icon">♠️</div>
         <h3>Texas Hold'em</h3>
-        <p>Face 4 AI opponents. Full betting rounds & showdown.</p>
-        <span class="game-card-cta">Play Solo →</span>
+        <p>Face 4 AI opponents with full betting rounds.</p>
+        <span class="game-card-cta">Play solo →</span>
       </a>
     </section>
-    <h3 class="section-title">Multiplayer <span class="muted">— online</span></h3>
+    <h3 class="section-title">Multiplayer <span class="muted">online</span></h3>
     <section class="game-grid">
       <a href="blackjack.html" class="game-card">
         <div class="game-card-icon">🃏</div>
         <h3>Blackjack</h3>
         <p>Up to 7 players vs the dealer. Create or join a room.</p>
-        <span class="game-card-cta">Play Online →</span>
+        <span class="game-card-cta">Play online →</span>
       </a>
       <a href="baccarat.html" class="game-card">
         <div class="game-card-icon">🎴</div>
         <h3>Baccarat</h3>
-        <p>Up to 9 players bet on Player, Banker, or Tie together.</p>
-        <span class="game-card-cta">Play Online →</span>
+        <p>Up to 9 players on Player, Banker, or Tie.</p>
+        <span class="game-card-cta">Play online →</span>
       </a>
       <a href="holdem.html" class="game-card">
         <div class="game-card-icon">♠️</div>
         <h3>Texas Hold'em</h3>
-        <p>2–9 players. Blinds, betting rounds, and showdown.</p>
-        <span class="game-card-cta">Play Online →</span>
+        <p>2–9 players with blinds and showdown.</p>
+        <span class="game-card-cta">Play online →</span>
       </a>
     </section>
     <section class="room-list-section">
-      <h3>Open Tables</h3>
-      <div id="room-list" class="room-list"><p class="muted">Loading tables...</p></div>
+      <h3>Open tables</h3>
+      <div id="room-list" class="room-list"><p class="muted">Loading tables…</p></div>
     </section>
   </main>
   <footer class="site-footer"><p>For entertainment only. No real money gambling.</p></footer>
