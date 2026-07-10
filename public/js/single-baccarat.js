@@ -19,11 +19,18 @@ const dealBtn = document.getElementById('deal-btn');
 const newRoundBtn = document.getElementById('new-round-btn');
 const balanceEl = document.getElementById('balance');
 
-function init() {
+async function init() {
+  await ensureBalanceReady();
+  const balance = getBalance();
+  const user = typeof fetchMe === 'function' ? await fetchMe() : null;
   const aiNames = pickAiNames(4);
-  const charIndices = pickUniqueCharacterIndices(aiNames.length);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length, user ? [user.characterIndex] : []);
   players = [
-    { id: humanId, name: 'You', chips: getBalance(), bets: { player: 0, banker: 0, tie: 0 }, isAi: false, result: null },
+    {
+      id: humanId, name: user?.displayName || 'You', chips: balance,
+      bets: { player: 0, banker: 0, tie: 0 }, isAi: false, result: null,
+      characterIndex: user?.characterIndex
+    },
     ...aiNames.map((n, i) => ({
       id: uid(), name: n, chips: 10000, bets: { player: 0, banker: 0, tie: 0 },
       isAi: true, result: null, characterIndex: charIndices[i]

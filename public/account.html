@@ -33,9 +33,7 @@
       const panel = document.getElementById('account-panel');
       const user = await fetchMe();
       if (!user) { location.href = 'login.html'; return; }
-      const src = user.characterIndex >= 14
-        ? `img/characters/char-${user.characterIndex}.svg`
-        : `img/characters/char-${user.characterIndex}.png`;
+      const src = `img/characters/char-${user.characterIndex}.png`;
       panel.innerHTML = `
         <h2>${user.displayName}</h2>
         <img class="account-avatar" src="${src}" alt="Your character">

@@ -50,7 +50,7 @@
       btn.type = 'button';
       btn.className = 'character-pick' + (i === 0 ? ' selected' : '');
       btn.dataset.index = i;
-      const src = i >= 14 ? `img/characters/char-${i}.svg` : `img/characters/char-${i}.png`;
+      const src = `img/characters/char-${i}.png`;
       btn.innerHTML = `<img src="${src}" alt="Character ${i}">`;
       btn.onclick = () => {
         selectedChar = i;

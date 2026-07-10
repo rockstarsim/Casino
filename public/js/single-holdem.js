@@ -26,11 +26,18 @@ const allinBtn = document.getElementById('allin-btn');
 const raiseInput = document.getElementById('raise-amount');
 const balanceEl = document.getElementById('balance');
 
-function init() {
+async function init() {
+  await ensureBalanceReady();
+  const balance = getBalance();
+  const user = typeof fetchMe === 'function' ? await fetchMe() : null;
   const aiNames = pickAiNames(4);
-  const charIndices = pickUniqueCharacterIndices(aiNames.length);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length, user ? [user.characterIndex] : []);
   players = [
-    { id: humanId, name: 'You', chips: getBalance(), hole: [], bet: 0, totalBet: 0, folded: false, status: 'waiting', isAi: false, lastAction: null },
+    {
+      id: humanId, name: user?.displayName || 'You', chips: balance, hole: [], bet: 0, totalBet: 0,
+      folded: false, status: 'waiting', isAi: false, lastAction: null,
+      characterIndex: user?.characterIndex
+    },
     ...aiNames.map((n, i) => ({
       id: uid(), name: n, chips: 10000, hole: [], bet: 0, totalBet: 0, folded: false,
       status: 'waiting', isAi: true, lastAction: null, characterIndex: charIndices[i]
