@@ -9,7 +9,13 @@ async function api(path, options = {}) {
 async function renderRooms() {
   const list = document.getElementById('room-list');
   try {
-    const rooms = await api('rooms');
+    const res = await fetch('/api/rooms');
+    const backend = res.headers.get('X-Store-Backend');
+    const rooms = await res.json();
+    if (backend === 'memory') {
+      const warn = document.getElementById('store-warn');
+      if (warn) warn.classList.remove('hidden');
+    }
     if (!rooms || !rooms.length) {
       list.innerHTML = '<p class="muted">No open tables. Create one from a game page!</p>';
       return;
@@ -17,7 +23,7 @@ async function renderRooms() {
     const gamePages = { blackjack: 'blackjack.html', baccarat: 'baccarat.html', holdem: 'holdem.html' };
     list.innerHTML = rooms.map(r => `
       <div class="room-item">
-        <span><strong>${r.game}</strong> · ${r.players} player(s) · ${r.phase}</span>
+        <span><strong>${r.game}</strong> · ${r.waiting ? 'waiting for host' : r.players + ' player(s)'} · ${r.phase}</span>
         <a href="${gamePages[r.game]}?code=${r.code}">Join ${r.code} →</a>
       </div>
     `).join('');

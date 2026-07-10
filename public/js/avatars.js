@@ -57,7 +57,6 @@ function characterImageFor(player) {
   const idx = Number.isInteger(player.characterIndex)
     ? player.characterIndex
     : hashStr(player.avatarSeed || `${player.name}-${player.id}` || player.name) % CHARACTER_COUNT;
-  if (idx >= 14) return `img/characters/char-${idx}.svg`;
   return `img/characters/char-${idx}.png`;
 }
 

@@ -18,11 +18,18 @@ const newRoundBtn = document.getElementById('new-round-btn');
 const betInput = document.getElementById('bet-amount');
 const balanceEl = document.getElementById('balance');
 
-function init() {
+async function init() {
+  await ensureBalanceReady();
+  const balance = getBalance();
+  const user = typeof fetchMe === 'function' ? await fetchMe() : null;
   const aiNames = pickAiNames(3);
-  const charIndices = pickUniqueCharacterIndices(aiNames.length);
+  const charIndices = pickUniqueCharacterIndices(aiNames.length, user ? [user.characterIndex] : []);
   players = [
-    { id: humanId, name: 'You', chips: getBalance(), bet: 0, hand: [], status: 'waiting', isAi: false, isYou: true, result: null },
+    {
+      id: humanId, name: user?.displayName || 'You', chips: balance, bet: 0, hand: [],
+      status: 'waiting', isAi: false, isYou: true, result: null,
+      characterIndex: user?.characterIndex
+    },
     ...aiNames.map((n, i) => ({
       id: uid(), name: n, chips: 10000, bet: 0, hand: [], status: 'waiting',
       isAi: true, result: null, characterIndex: charIndices[i]

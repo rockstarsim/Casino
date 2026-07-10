@@ -9,7 +9,9 @@ async function api(path, options = {}) {
     ...(typeof authHeaders === 'function' ? authHeaders() : {})
   };
   const res = await fetch('/api/' + path, { headers, ...options });
-  return res.json();
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok && data.error) data._httpError = true;
+  return data;
 }
 
 function setOnline(online) {
@@ -24,7 +26,7 @@ async function pollState() {
   try {
     const state = await api(`poll?code=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(playerId)}`);
     if (state.error) {
-      if (state.error === 'Room not found') leaveRoomQuiet();
+      if (state.error.includes('Room not found')) leaveRoomQuiet();
       return;
     }
     setOnline(true);
@@ -96,36 +98,51 @@ function setupLobby(game, onJoined) {
     onJoined(res);
   }
 
+  async function doJoin(code) {
+    const name = nameInput.value.trim();
+    const normalized = String(code || '').trim().toUpperCase();
+    if (name.length < 2) { showError('Enter your name (2+ chars)'); return; }
+    if (normalized.length < 4) { showError('Enter a valid room code'); return; }
+    try {
+      const saved = typeof getSavedSession === 'function' ? getSavedSession() : {};
+      const body = {
+        type: 'join', code: normalized, name,
+        playerId: saved.roomCode === normalized ? saved.playerId : undefined
+      };
+      if (typeof getToken === 'function' && getToken()) body.token = getToken();
+      const res = await api('rooms', { method: 'POST', body: JSON.stringify(body) });
+      if (res.error) { showError(res.error); return; }
+      joinSuccess(res);
+    } catch {
+      showError('Could not reach server — check your connection and try again');
+    }
+  }
+
   createBtn.addEventListener('click', async () => {
     const name = nameInput.value.trim();
     if (name.length < 2) { showError('Enter your name (2+ chars)'); return; }
+    createBtn.disabled = true;
     try {
       const body = { type: 'create', game, name };
       if (typeof getToken === 'function' && getToken()) body.token = getToken();
       const res = await api('rooms', { method: 'POST', body: JSON.stringify(body) });
+      if (res.error) { showError(res.error); return; }
       joinSuccess(res);
-    } catch { showError('Server error'); }
+    } catch {
+      showError('Could not reach server — check your connection and try again');
+    } finally {
+      createBtn.disabled = false;
+    }
   });
 
-  joinBtn.addEventListener('click', async () => {
-    const name = nameInput.value.trim();
-    const code = joinCode.value.trim().toUpperCase();
-    if (name.length < 2) { showError('Enter your name'); return; }
-    if (code.length < 4) { showError('Enter room code'); return; }
-    try {
-      const saved = typeof getSavedSession === 'function' ? getSavedSession() : {};
-      const body = {
-        type: 'join', code, name,
-        playerId: saved.roomCode === code ? saved.playerId : undefined
-      };
-      if (typeof getToken === 'function' && getToken()) body.token = getToken();
-      const res = await api('rooms', { method: 'POST', body: JSON.stringify(body) });
-      joinSuccess(res);
-    } catch { showError('Server error'); }
-  });
+  joinBtn.addEventListener('click', () => doJoin(joinCode.value));
 
   const params = new URLSearchParams(location.search);
-  if (params.get('code')) joinCode.value = params.get('code');
+  const urlCode = params.get('code');
+  if (urlCode) {
+    joinCode.value = urlCode.trim().toUpperCase();
+    setTimeout(() => doJoin(joinCode.value), 300);
+  }
 
   window.addEventListener('beforeunload', () => {
     if (roomCode && playerId) {
