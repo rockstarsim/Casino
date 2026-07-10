@@ -4,10 +4,11 @@ let onStateCallback = null;
 let pollTimer = null;
 
 async function api(path, options = {}) {
-  const res = await fetch('/api/' + path, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
-  });
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(typeof authHeaders === 'function' ? authHeaders() : {})
+  };
+  const res = await fetch('/api/' + path, { headers, ...options });
   return res.json();
 }
 
@@ -21,8 +22,11 @@ function setOnline(online) {
 async function pollState() {
   if (!roomCode || !playerId) return;
   try {
-    const state = await api(`poll?code=${roomCode}&playerId=${playerId}`);
-    if (state.error) return;
+    const state = await api(`poll?code=${encodeURIComponent(roomCode)}&playerId=${encodeURIComponent(playerId)}`);
+    if (state.error) {
+      if (state.error === 'Room not found') leaveRoomQuiet();
+      return;
+    }
     setOnline(true);
     if (onStateCallback) onStateCallback(state);
   } catch {
@@ -40,6 +44,21 @@ function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
 
+async function leaveRoomQuiet() {
+  if (roomCode && playerId) {
+    try {
+      await api('rooms', {
+        method: 'POST',
+        body: JSON.stringify({ type: 'leave', code: roomCode, playerId })
+      });
+    } catch { /* ignore */ }
+  }
+  stopPolling();
+  playerId = null;
+  roomCode = null;
+  if (typeof clearSession === 'function') clearSession();
+}
+
 function setupLobby(game, onJoined) {
   const nameInput = document.getElementById('player-name');
   const createBtn = document.getElementById('create-room-btn');
@@ -50,16 +69,25 @@ function setupLobby(game, onJoined) {
   const lobbyError = document.getElementById('lobby-error');
   const roomCodeEl = document.getElementById('room-code');
 
-  const saved = getPlayerName();
-  if (saved) nameInput.value = saved;
+  (async () => {
+    const user = typeof fetchMe === 'function' ? await fetchMe() : null;
+    if (user) {
+      nameInput.value = user.displayName;
+      nameInput.readOnly = true;
+    } else {
+      const saved = getPlayerName();
+      if (saved) nameInput.value = saved;
+    }
+  })();
 
   function showError(msg) { lobbyError.textContent = msg || ''; }
 
-  function joinSuccess(res) {
+  async function joinSuccess(res) {
     if (res.error) { showError(res.error); return; }
     playerId = res.playerId;
     roomCode = res.code;
-    savePlayerName(nameInput.value.trim());
+    if (typeof saveSession === 'function') saveSession(playerId, roomCode);
+    if (!nameInput.readOnly) savePlayerName(nameInput.value.trim());
     lobbyPanel.classList.add('hidden');
     gamePanel.classList.remove('hidden');
     roomCodeEl.textContent = 'Room: ' + roomCode;
@@ -72,7 +100,9 @@ function setupLobby(game, onJoined) {
     const name = nameInput.value.trim();
     if (name.length < 2) { showError('Enter your name (2+ chars)'); return; }
     try {
-      const res = await api('rooms', { method: 'POST', body: JSON.stringify({ type: 'create', game, name }) });
+      const body = { type: 'create', game, name };
+      if (typeof getToken === 'function' && getToken()) body.token = getToken();
+      const res = await api('rooms', { method: 'POST', body: JSON.stringify(body) });
       joinSuccess(res);
     } catch { showError('Server error'); }
   });
@@ -83,13 +113,28 @@ function setupLobby(game, onJoined) {
     if (name.length < 2) { showError('Enter your name'); return; }
     if (code.length < 4) { showError('Enter room code'); return; }
     try {
-      const res = await api('rooms', { method: 'POST', body: JSON.stringify({ type: 'join', code, name }) });
+      const saved = typeof getSavedSession === 'function' ? getSavedSession() : {};
+      const body = {
+        type: 'join', code, name,
+        playerId: saved.roomCode === code ? saved.playerId : undefined
+      };
+      if (typeof getToken === 'function' && getToken()) body.token = getToken();
+      const res = await api('rooms', { method: 'POST', body: JSON.stringify(body) });
       joinSuccess(res);
     } catch { showError('Server error'); }
   });
 
   const params = new URLSearchParams(location.search);
   if (params.get('code')) joinCode.value = params.get('code');
+
+  window.addEventListener('beforeunload', () => {
+    if (roomCode && playerId) {
+      navigator.sendBeacon?.('/api/rooms', new Blob([JSON.stringify({
+        type: 'leave', code: roomCode, playerId
+      })], { type: 'application/json' }));
+    }
+  });
+
   setOnline(true);
 }
 
