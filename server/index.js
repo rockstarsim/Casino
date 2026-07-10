@@ -237,5 +237,5 @@ function getPlayerRoom(socket) {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Casino server running at http://localhost:${PORT}`);
+  console.log(`Barona casino server running at http://localhost:${PORT}`);
 });
