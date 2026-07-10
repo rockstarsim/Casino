@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In — Barona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="lobby">
+  <header class="site-header">
+    <div class="header-left">
+      <a href="/" class="logo"><img src="img/barona-logo.png" alt="Barona" class="logo-img"></a>
+    </div>
+    <div class="header-right">
+      <a href="register.html" class="back-link">Register</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
+  </header>
+  <main class="lobby-main">
+    <section class="lobby-panel auth-panel">
+      <h2>Welcome back</h2>
+      <p class="muted auth-sub">Log in to use your saved name, character, and chip balance.</p>
+      <label class="auth-label">Username</label>
+      <input type="text" id="username" autocomplete="username">
+      <label class="auth-label">Password</label>
+      <input type="password" id="password" autocomplete="current-password">
+      <p id="auth-error" class="error-text"></p>
+      <button type="button" id="login-btn" class="btn btn-gold">Log in</button>
+      <p class="mode-links"><a href="register.html">New here? Create an account</a></p>
+    </section>
+  </main>
+  <script src="js/shared.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById('login-btn').onclick = async () => {
+      const err = document.getElementById('auth-error');
+      err.textContent = '';
+      const result = await loginAccount({
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value
+      });
+      if (result.error) { err.textContent = result.error; return; }
+      location.href = '/';
+    };
+  </script>
+</body>
+</html>

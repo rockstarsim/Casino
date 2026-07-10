@@ -6,9 +6,11 @@
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "generate-art": "node scripts/generate-art.js"
+    "generate-art": "node scripts/generate-art.js",
+    "generate-characters": "node scripts/generate-characters.js"
   },
   "dependencies": {
+    "@upstash/redis": "^1.38.0",
     "express": "^4.21.0",
     "socket.io": "^4.8.0"
   }

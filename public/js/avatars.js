@@ -1,4 +1,4 @@
-const CHARACTER_COUNT = 14;
+const CHARACTER_COUNT = 34;
 
 const CHARACTER_NAMES = [
   'Yuki', 'Ren', 'Mika', 'Kai', 'Hana', 'Sora', 'Akira', 'Rin',
@@ -53,12 +53,11 @@ function assignUniqueCharacters(players) {
 
 function characterImageFor(player) {
   if (player.isDealer) return 'img/characters/dealer.png';
-  if (isYouPlayer(player)) return 'img/characters/player.png';
-  if (Number.isInteger(player.characterIndex)) {
-    return `img/characters/char-${player.characterIndex}.png`;
-  }
-  const seed = player.avatarSeed || `${player.name}-${player.id}` || player.name;
-  const idx = hashStr(seed) % CHARACTER_COUNT;
+  if (isYouPlayer(player) && !Number.isInteger(player.characterIndex)) return 'img/characters/player.png';
+  const idx = Number.isInteger(player.characterIndex)
+    ? player.characterIndex
+    : hashStr(player.avatarSeed || `${player.name}-${player.id}` || player.name) % CHARACTER_COUNT;
+  if (idx >= 14) return `img/characters/char-${idx}.svg`;
   return `img/characters/char-${idx}.png`;
 }
 

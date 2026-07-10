@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Barona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="lobby">
+  <header class="site-header">
+    <div class="header-left">
+      <a href="/" class="logo"><img src="img/barona-logo.png" alt="Barona" class="logo-img"></a>
+    </div>
+    <div class="header-right">
+      <a href="login.html" class="back-link">Log in</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
+  </header>
+  <main class="lobby-main">
+    <section class="lobby-panel auth-panel">
+      <h2>Create your account</h2>
+      <p class="muted auth-sub">Pick your name, character, and password. Your chip balance saves to your account.</p>
+      <label class="auth-label">Username</label>
+      <input type="text" id="username" autocomplete="username" placeholder="letters, numbers, underscore">
+      <label class="auth-label">Display name (at the table)</label>
+      <input type="text" id="display-name" maxlength="16" placeholder="Your casino name">
+      <label class="auth-label">Password</label>
+      <input type="password" id="password" autocomplete="new-password" placeholder="6+ characters">
+      <label class="auth-label">Choose your character</label>
+      <div id="character-grid" class="character-grid"></div>
+      <p id="auth-error" class="error-text"></p>
+      <button type="button" id="register-btn" class="btn btn-gold">Create account</button>
+      <p class="mode-links"><a href="login.html">Already have an account? Log in</a></p>
+    </section>
+  </main>
+  <script src="js/shared.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const CHARACTER_COUNT = 34;
+    let selectedChar = 0;
+    const grid = document.getElementById('character-grid');
+    const err = document.getElementById('auth-error');
+
+    for (let i = 0; i < CHARACTER_COUNT; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'character-pick' + (i === 0 ? ' selected' : '');
+      btn.dataset.index = i;
+      const src = i >= 14 ? `img/characters/char-${i}.svg` : `img/characters/char-${i}.png`;
+      btn.innerHTML = `<img src="${src}" alt="Character ${i}">`;
+      btn.onclick = () => {
+        selectedChar = i;
+        grid.querySelectorAll('.character-pick').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      };
+      grid.appendChild(btn);
+    }
+
+    document.getElementById('register-btn').onclick = async () => {
+      err.textContent = '';
+      const result = await registerAccount({
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value,
+        displayName: document.getElementById('display-name').value.trim(),
+        characterIndex: selectedChar
+      });
+      if (result.error) { err.textContent = result.error; return; }
+      location.href = '/';
+    };
+  </script>
+</body>
+</html>

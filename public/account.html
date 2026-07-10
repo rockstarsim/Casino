@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Barona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="lobby">
+  <header class="site-header">
+    <div class="header-left">
+      <a href="/" class="logo"><img src="img/barona-logo.png" alt="Barona" class="logo-img"></a>
+    </div>
+    <div class="header-right">
+      <a href="/" class="back-link">← Lobby</a>
+      <button type="button" class="theme-toggle" aria-label="Toggle theme"></button>
+    </div>
+  </header>
+  <main class="lobby-main">
+    <section class="lobby-panel auth-panel" id="account-panel">
+      <p class="muted">Loading…</p>
+    </section>
+  </main>
+  <script src="js/shared.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/avatars.js"></script>
+  <script>
+    (async () => {
+      const panel = document.getElementById('account-panel');
+      const user = await fetchMe();
+      if (!user) { location.href = 'login.html'; return; }
+      const src = user.characterIndex >= 14
+        ? `img/characters/char-${user.characterIndex}.svg`
+        : `img/characters/char-${user.characterIndex}.png`;
+      panel.innerHTML = `
+        <h2>${user.displayName}</h2>
+        <img class="account-avatar" src="${src}" alt="Your character">
+        <p><strong>Username:</strong> ${user.username}</p>
+        <p><strong>Balance:</strong> ${formatMoney(user.balance)}</p>
+        <button type="button" id="logout-btn" class="btn btn-outline">Log out</button>
+        <p class="mode-links"><a href="/">Back to games</a></p>`;
+      document.getElementById('logout-btn').onclick = async () => {
+        await logoutAccount();
+        location.href = '/';
+      };
+    })();
+  </script>
+</body>
+</html>
